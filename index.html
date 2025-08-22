@@ -327,14 +327,14 @@
     </header>
 
     <div class="auth-panel" id="auth-panel">
-      <h3 style="margin: 0 0 8px; font-size: 14px;">☁️ Sincronización en la Nube</h3>
+      <h3 style="margin: 0 0 8px; font-size: 14px;">☁️ Sincronización Rápida</h3>
       <p style="margin: 0 0 8px; font-size: 12px; color: var(--muted);">
-        Conecta con tu email para sincronizar proformas entre dispositivos
+        Ingresa tu PIN para sincronizar proformas instantáneamente
       </p>
       <div class="auth-form" id="auth-form">
-        <input type="email" id="user-email" placeholder="tu@email.com" style="flex: 1; max-width: 200px;">
+        <input type="password" id="user-pin" placeholder="PIN (4 dígitos)" maxlength="4" style="flex: 1; max-width: 150px; text-align: center; font-size: 16px; letter-spacing: 2px;">
         <button class="btn btn--primary" id="login-btn">🔑 Conectar</button>
-        <button class="btn" id="work-offline" style="display: none;">📱 Trabajar sin conexión</button>
+        <button class="btn" id="work-offline">📱 Sin conexión</button>
       </div>
       <div class="sync-status" id="sync-status" style="display: none;">
         <div class="sync-indicator" id="sync-indicator"></div>
@@ -383,6 +383,17 @@
           <small style="color: var(--muted); display: block; margin-top: 4px;">
             Puedes usar Cloudinary, Imgur o cualquier URL de imagen
           </small>
+        </div>
+        <div>
+          <label><strong>PIN de Sincronización:</strong></label>
+          <input type="password" id="profile-pin" placeholder="4 dígitos" maxlength="4" style="text-align: center; letter-spacing: 2px;">
+          <small style="color: var(--muted); display: block; margin-top: 2px;">
+            Para sincronizar tus datos en la nube
+          </small>
+        </div>
+        <div>
+          <label><strong>Confirmar PIN:</strong></label>
+          <input type="password" id="profile-pin-confirm" placeholder="4 dígitos" maxlength="4" style="text-align: center; letter-spacing: 2px;">
         </div>
       </div>
       <div class="actions" style="margin-top: 12px;">
@@ -548,6 +559,7 @@
         this.isOnline = false;
         this.currentSupabaseUser = null;
         this.syncQueue = [];
+        this.pendingSync = []; // Cola de sincronización offline
         this.init();
       }
 
@@ -558,21 +570,24 @@
             tagline: 'Soluciones Web Profesionales',
             email: 'renato.espinoza.medrano@gmail.com',
             phone: '+51 975 212 132',
-            logo: 'https://res.cloudinary.com/renatoez/image/upload/v1755882448/Untitled_qmza6o.svg'
+            logo: 'https://res.cloudinary.com/renatoez/image/upload/v1755882448/Untitled_qmza6o.svg',
+            pin: '1234' // PIN por defecto
           },
           kike: {
             name: 'Kike',
             tagline: 'Desarrollo Web & Diseño',
             email: 'kike@ejemplo.com',
             phone: '+51 999 888 777',
-            logo: ''
+            logo: '',
+            pin: '5678' // PIN por defecto
           },
           carlos: {
             name: 'Carlos',
             tagline: 'Soluciones Digitales',
             email: 'carlos@ejemplo.com',
             phone: '+51 888 777 666',
-            logo: ''
+            logo: '',
+            pin: '9012' // PIN por defecto
           }
         };
       }
@@ -584,13 +599,69 @@
       async init() {
         this.loadUserProfiles();
         this.loadCurrentUser();
+        this.loadPendingSync(); // Cargar cola de sincronización
         this.setCurrentDate();
         this.setupLogoFallback();
         this.bindEvents();
         this.updateUserInterface();
+        this.setupConnectionMonitoring(); // Nuevo: monitoreo de conexión
         await this.checkSupabaseAuth();
         this.loadSavedProformas();
         this.autoSave();
+      }
+
+      loadPendingSync() {
+        const pending = localStorage.getItem('pending-sync');
+        if (pending) {
+          this.pendingSync = JSON.parse(pending);
+          if (this.pendingSync.length > 0) {
+            ToastManager.show(`${this.pendingSync.length} cambios pendientes de sincronizar`, 'info', 'Sincronización pendiente');
+          }
+        }
+      }
+
+      setupConnectionMonitoring() {
+        // Detectar cuando regresa la conexión
+        window.addEventListener('online', () => {
+          ToastManager.show('Conexión restaurada. Sincronizando...', 'info', 'Conexión restaurada');
+          this.syncPendingData();
+        });
+
+        window.addEventListener('offline', () => {
+          ToastManager.show('Sin conexión. Guardando localmente', 'warning', 'Modo offline');
+          this.isOnline = false;
+          this.updateSyncStatus('offline', 'Sin conexión');
+        });
+
+        // Verificar conexión periódicamente
+        setInterval(() => {
+          if (navigator.onLine && !this.isOnline) {
+            this.syncPendingData();
+          }
+        }, 30000); // Cada 30 segundos
+      }
+
+      async syncPendingData() {
+        if (this.pendingSync.length === 0) return;
+
+        try {
+          ToastManager.show(`Sincronizando ${this.pendingSync.length} cambios...`, 'info', 'Sincronización automática');
+          
+          for (const item of this.pendingSync) {
+            if (item.type === 'proforma') {
+              await this.syncProformaToSupabase(item.data);
+            } else if (item.type === 'profile') {
+              await this.syncProfileToSupabase();
+            }
+          }
+          
+          this.pendingSync = [];
+          localStorage.removeItem('pending-sync');
+          ToastManager.show('Todos los cambios sincronizados', 'success', 'Sincronización completa');
+          
+        } catch (error) {
+          ToastManager.show('Error en sincronización automática', 'error', 'Error de sincronización');
+        }
       }
 
       async checkSupabaseAuth() {
@@ -713,9 +784,14 @@
         document.getElementById('cancel-profile').addEventListener('click', () => this.toggleProfilePanel());
 
         // Eventos de autenticación
-        document.getElementById('login-btn').addEventListener('click', () => this.loginWithEmail());
+        document.getElementById('login-btn').addEventListener('click', () => this.loginWithPin());
         document.getElementById('logout-btn').addEventListener('click', () => this.logout());
         document.getElementById('work-offline').addEventListener('click', () => this.workOffline());
+        
+        // Permitir login con Enter
+        document.getElementById('user-pin').addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') this.loginWithPin();
+        });
 
         // Auto-actualizar resumen de precios
         document.addEventListener('input', (e) => {
@@ -748,69 +824,89 @@
           document.getElementById('profile-email').value = profile.email;
           document.getElementById('profile-phone').value = profile.phone;
           document.getElementById('profile-logo').value = profile.logo;
+          document.getElementById('profile-pin').value = profile.pin || '';
+          document.getElementById('profile-pin-confirm').value = profile.pin || '';
         }
       }
 
       saveProfile() {
+        const pin = document.getElementById('profile-pin').value;
+        const pinConfirm = document.getElementById('profile-pin-confirm').value;
+        
+        // Validar PIN
+        if (pin && pin !== pinConfirm) {
+          ToastManager.show('Los PINs no coinciden', 'error', 'Error de validación');
+          return;
+        }
+        
+        if (pin && (pin.length !== 4 || !/^\d{4}$/.test(pin))) {
+          ToastManager.show('El PIN debe tener exactamente 4 dígitos', 'error', 'PIN inválido');
+          return;
+        }
+
         const profile = {
           name: document.getElementById('profile-name').value,
           tagline: document.getElementById('profile-tagline').value,
           email: document.getElementById('profile-email').value,
           phone: document.getElementById('profile-phone').value,
-          logo: document.getElementById('profile-logo').value
+          logo: document.getElementById('profile-logo').value,
+          pin: pin || this.userProfiles[this.currentUser].pin // Mantener PIN anterior si no se cambia
         };
 
         this.userProfiles[this.currentUser] = profile;
         this.saveUserProfiles();
         this.updateUserInterface();
         this.toggleProfilePanel();
-        ToastManager.show(`Configuración actualizada`, 'success', `Perfil de ${profile.name}`);
+        
+        if (pin && pin !== this.userProfiles[this.currentUser].pin) {
+          ToastManager.show('PIN actualizado correctamente', 'success', `Perfil de ${profile.name}`);
+        } else {
+          ToastManager.show('Configuración actualizada', 'success', `Perfil de ${profile.name}`);
+        }
         
         // Sincronizar perfil con Supabase si está conectado
         if (this.isOnline) {
           this.syncProfileToSupabase();
+        } else {
+          // Agregar a cola de sincronización
+          this.pendingSync.push({ type: 'profile', data: profile });
+          localStorage.setItem('pending-sync', JSON.stringify(this.pendingSync));
         }
       }
 
-      async loginWithEmail() {
-        const email = document.getElementById('user-email').value;
-        if (!email) {
-          ToastManager.show('Por favor ingresa tu email', 'warning', 'Email requerido');
+      async loginWithPin() {
+        const pin = document.getElementById('user-pin').value;
+        const userProfile = this.userProfiles[this.currentUser];
+        
+        if (!pin) {
+          ToastManager.show('Por favor ingresa tu PIN', 'warning', 'PIN requerido');
+          return;
+        }
+
+        if (pin !== userProfile.pin) {
+          ToastManager.show('PIN incorrecto para este usuario', 'error', 'Acceso denegado');
+          document.getElementById('user-pin').value = '';
           return;
         }
 
         try {
           this.updateSyncStatus('sync', 'Conectando...');
           
-          // Configurar la URL correcta para el redirect
-          const redirectTo = window.location.origin + window.location.pathname;
+          // Simular usuario con el PIN como ID único
+          this.currentSupabaseUser = {
+            id: `user_${this.currentUser}_${pin}`,
+            pin: pin,
+            username: this.currentUser
+          };
           
-          const { error } = await supabase.auth.signInWithOtp({
-            email: email,
-            options: {
-              shouldCreateUser: true,
-              emailRedirectTo: redirectTo
-            }
-          });
-
-          if (error) throw error;
-
-          ToastManager.show('Revisa tu bandeja de entrada y haz click en el enlace', 'success', 'Enlace mágico enviado');
-          
-          // Escuchar cambios de autenticación
-          supabase.auth.onAuthStateChange((event, session) => {
-            if (event === 'SIGNED_IN' && session) {
-              this.currentSupabaseUser = session.user;
-              this.isOnline = true;
-              this.updateAuthUI();
-              this.syncFromSupabase();
-              ToastManager.show('Datos sincronizados desde la nube', 'success', '¡Conectado exitosamente!');
-            }
-          });
+          this.isOnline = true;
+          this.updateAuthUI();
+          await this.syncFromSupabase();
+          ToastManager.show('Datos sincronizados desde la nube', 'success', '¡Conectado exitosamente!');
 
         } catch (error) {
-          console.error('Error de login:', error);
-          ToastManager.show(error.message, 'error', 'Error de conexión');
+          console.error('Error de conexión:', error);
+          ToastManager.show('Error al conectar con la nube', 'error', 'Error de conexión');
           this.updateSyncStatus('error', 'Error de conexión');
         }
       }
@@ -1061,6 +1157,11 @@
         // Sincronizar con Supabase si está conectado
         if (this.isOnline) {
           await this.syncProformaToSupabase(data);
+        } else {
+          // Agregar a cola de sincronización offline
+          this.pendingSync.push({ type: 'proforma', data: data });
+          localStorage.setItem('pending-sync', JSON.stringify(this.pendingSync));
+          ToastManager.show('Se sincronizará cuando regrese la conexión', 'info', 'Guardado offline');
         }
         
         this.loadSavedProformas();
@@ -1088,7 +1189,7 @@
       }
 
       newProforma(showConfirm = true) {
-        if (!showConfirm || confirm('¿Crear nueva proforma? Los cambios no guardados se perderán.')) {
+        if (!showConfirm || this.confirmAction('¿Crear nueva proforma?', 'Los cambios no guardados se perderán')) {
           // Limpiar todos los campos editables
           document.querySelectorAll('[contenteditable]').forEach(el => {
             if (el.innerHTML.includes('[')) return; // Mantener placeholders
@@ -1184,7 +1285,7 @@
       }
 
       deleteProforma(number) {
-        if (confirm(`¿Eliminar la proforma ${number}?`)) {
+        if (this.confirmAction(`¿Eliminar la proforma ${number}?`, 'Esta acción no se puede deshacer')) {
           const saved = this.getSavedProformas();
           const filtered = saved.filter(p => p.number !== number);
           localStorage.setItem(this.getStorageKey(), JSON.stringify(filtered));
@@ -1257,6 +1358,11 @@
             }
           }
         }, 30000);
+      }
+
+      confirmAction(title, message) {
+        // Por ahora usar confirm nativo, pero podrías crear un modal elegante
+        return confirm(`${title}\n\n${message}`);
       }
     }
 
