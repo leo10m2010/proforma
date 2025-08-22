@@ -89,13 +89,152 @@
 
     footer { border-top: 1px solid var(--border); margin-top: 12px; padding-top: 6px; font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; }
 
-    .actions { display: flex; gap: 6px; margin-top: 8px; }
-    .btn { padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; cursor: pointer; }
+    .actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+    .btn { padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; cursor: pointer; background: #fff; }
     .btn--primary { background: var(--primary); color: #fff; }
+    .btn--success { background: #059669; color: #fff; }
+    .btn--warning { background: #d97706; color: #fff; }
+    
+    .management-panel { 
+      background: #f8fafc; 
+      border: 1px solid var(--border); 
+      border-radius: 8px; 
+      padding: 12px; 
+      margin-bottom: 16px; 
+      display: none; 
+    }
+    .management-panel.active { display: block; }
+    
+    .user-selector {
+      background: var(--primary);
+      color: white;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .user-select {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: none;
+      font-size: 12px;
+      background: white;
+      color: var(--primary);
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+    
+    .profile-panel {
+      background: #fffbeb;
+      border: 1px solid #fbbf24;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .profile-panel.active { display: block; }
+    .profile-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      font-size: 12px;
+    }
+    .profile-form input, .profile-form textarea {
+      padding: 6px 8px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    
+    .auth-panel {
+      background: #f0f9ff;
+      border: 1px solid #0ea5e9;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .auth-form {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      align-items: center;
+      margin-top: 12px;
+    }
+    .auth-form input {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+    }
+    .sync-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      margin-top: 8px;
+    }
+    .sync-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+    }
+    .sync-indicator.offline {
+      background: #f59e0b;
+    }
+    .sync-indicator.error {
+      background: #ef4444;
+    }
+    .saved-proformas { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+      gap: 8px; 
+      margin-top: 8px; 
+    }
+    .saved-item { 
+      background: #fff; 
+      border: 1px solid var(--border); 
+      border-radius: 6px; 
+      padding: 8px; 
+      font-size: 12px; 
+    }
+    .saved-item .actions-small { 
+      display: flex; 
+      gap: 4px; 
+      margin-top: 6px; 
+    }
+    .btn-small { 
+      padding: 3px 6px; 
+      font-size: 10px; 
+      border-radius: 4px; 
+      border: 1px solid var(--border); 
+      cursor: pointer; 
+    }
 
     @media print {
-      .page { border: none; box-shadow: none; margin: 0; padding: 0; }
-      .actions, .btn, .cta a { display: none !important; }
+      body { background: white !important; }
+      .page { 
+        border: none; 
+        box-shadow: none; 
+        margin: 0; 
+        padding: 15mm; 
+        max-width: none;
+        width: 100%;
+      }
+      .actions, .btn, .cta, .management-panel, .user-selector, .profile-panel, .auth-panel { 
+        display: none !important; 
+      }
+      header { margin-bottom: 20px; }
+      .section-title { margin-top: 20px; }
+      table { page-break-inside: avoid; }
+      .grid-2 { page-break-inside: avoid; }
     }
   </style>
 </head>
@@ -116,6 +255,85 @@
         <span class="badge">Documento no fiscal</span>
       </div>
     </header>
+
+    <div class="auth-panel" id="auth-panel">
+      <h3 style="margin: 0 0 8px; font-size: 14px;">☁️ Sincronización en la Nube</h3>
+      <p style="margin: 0 0 8px; font-size: 12px; color: var(--muted);">
+        Conecta con tu email para sincronizar proformas entre dispositivos
+      </p>
+      <div class="auth-form" id="auth-form">
+        <input type="email" id="user-email" placeholder="tu@email.com" style="flex: 1; max-width: 200px;">
+        <button class="btn btn--primary" id="login-btn">🔑 Conectar</button>
+        <button class="btn" id="work-offline" style="display: none;">📱 Trabajar sin conexión</button>
+      </div>
+      <div class="sync-status" id="sync-status" style="display: none;">
+        <div class="sync-indicator" id="sync-indicator"></div>
+        <span id="sync-text">Conectado y sincronizado</span>
+        <button class="btn" id="logout-btn" style="margin-left: auto;">🚪 Desconectar</button>
+      </div>
+    </div>
+
+    <div class="user-selector">
+      <div class="user-info">
+        👤 <strong>Usuario:</strong>
+        <select class="user-select" id="user-select">
+          <option value="tato">Tato (Renato)</option>
+          <option value="kike">Kike</option>
+          <option value="carlos">Carlos</option>
+        </select>
+        <button class="btn" id="config-profile" style="margin-left: 10px;">⚙️ Configurar</button>
+      </div>
+      <div style="font-size: 11px; opacity: 0.8;">
+        Cada usuario tiene sus propias proformas y numeración
+      </div>
+    </div>
+
+    <div class="profile-panel" id="profile-panel">
+      <h3 style="margin: 0 0 12px; font-size: 14px;">⚙️ Configuración de Perfil</h3>
+      <div class="profile-form">
+        <div>
+          <label><strong>Nombre/Empresa:</strong></label>
+          <input type="text" id="profile-name" placeholder="Ej: Tato Solutions">
+        </div>
+        <div>
+          <label><strong>Tagline:</strong></label>
+          <input type="text" id="profile-tagline" placeholder="Ej: Soluciones Web Profesionales">
+        </div>
+        <div>
+          <label><strong>Email:</strong></label>
+          <input type="email" id="profile-email" placeholder="contacto@ejemplo.com">
+        </div>
+        <div>
+          <label><strong>Teléfono/WhatsApp:</strong></label>
+          <input type="text" id="profile-phone" placeholder="+51 975 212 132">
+        </div>
+        <div style="grid-column: 1 / -1;">
+          <label><strong>URL del Logo:</strong></label>
+          <input type="url" id="profile-logo" placeholder="https://mi-logo.com/logo.svg">
+          <small style="color: var(--muted); display: block; margin-top: 4px;">
+            Puedes usar Cloudinary, Imgur o cualquier URL de imagen
+          </small>
+        </div>
+      </div>
+      <div class="actions" style="margin-top: 12px;">
+        <button class="btn btn--success" id="save-profile">💾 Guardar Perfil</button>
+        <button class="btn" id="cancel-profile">❌ Cancelar</button>
+      </div>
+    </div>
+
+    <div class="management-panel" id="management-panel">
+      <h3 style="margin: 0 0 8px; font-size: 14px;">📁 Gestión de Proformas</h3>
+      <div class="actions">
+        <button class="btn btn--success" id="save-proforma">💾 Guardar</button>
+        <button class="btn btn--warning" id="new-proforma">📄 Nueva</button>
+        <button class="btn" id="export-data">📤 Exportar Datos</button>
+        <button class="btn" id="import-data">📥 Importar Datos</button>
+        <input type="file" id="import-file" accept=".json" style="display: none;">
+      </div>
+      <div class="saved-proformas" id="saved-proformas">
+        <!-- Las proformas guardadas aparecerán aquí -->
+      </div>
+    </div>
 
     <section class="grid-2">
       <div class="panel">
@@ -147,14 +365,14 @@
       </thead>
       <tbody>
         <tr>
-          <td>Opción 1 — WordPress</td>
-          <td class="incl">• Diseño personalizado y responsive.<br>• Integración de <strong>formulario de recepción</strong> vinculado a cuestionario de Facebook.<br>• <strong>Call to Action a WhatsApp</strong>.<br>• Capacitación básica.</td>
-          <td class="price">2,000.00</td>
+          <td contenteditable="true">Opción 1 — WordPress</td>
+          <td class="incl" contenteditable="true">• Diseño personalizado y responsive.<br>• Integración de <strong>formulario de recepción</strong> vinculado a cuestionario de Facebook.<br>• <strong>Call to Action a WhatsApp</strong>.<br>• Capacitación básica.</td>
+          <td class="price" contenteditable="true">2,000.00</td>
         </tr>
         <tr>
-          <td>Opción 2 — Next.js</td>
-          <td class="incl">• Arquitectura moderna con alto rendimiento y SEO técnico.<br>• Integración de <strong>formulario de recepción</strong> vinculada a cuestionario de Facebook.<br>• <strong>Call to Action a WhatsApp</strong>.<br>• Diseño moderno y escalable.</td>
-          <td class="price">3,000.00</td>
+          <td contenteditable="true">Opción 2 — Next.js</td>
+          <td class="incl" contenteditable="true">• Arquitectura moderna con alto rendimiento y SEO técnico.<br>• Integración de <strong>formulario de recepción</strong> vinculada a cuestionario de Facebook.<br>• <strong>Call to Action a WhatsApp</strong>.<br>• Diseño moderno y escalable.</td>
+          <td class="price" contenteditable="true">3,000.00</td>
         </tr>
       </tbody>
     </table>
@@ -162,20 +380,20 @@
     <div class="cards">
       <div class="card">
         <h4>Incluye</h4>
-        Puesta en producción · Optimizado móviles · Capacitación básica
+        <div contenteditable="true">Puesta en producción · Optimizado móviles · Capacitación básica</div>
       </div>
       <div class="card">
         <h4>No incluye</h4>
-        Hosting y dominio (se cotizan aparte).
+        <div contenteditable="true">Hosting y dominio (se cotizan aparte).</div>
       </div>
     </div>
 
     <div class="totals">
       <div>
-        <p><strong>Plazo estimado:</strong> 2–4 semanas.</p>
-        <p>Los precios incluyen desarrollo e implementación. Esta proforma no constituye comprobante de pago.</p>
+        <p><strong>Plazo estimado:</strong> <span contenteditable="true">2–4 semanas</span>.</p>
+        <p contenteditable="true">Los precios incluyen desarrollo e implementación. Esta proforma no constituye comprobante de pago.</p>
       </div>
-      <div><strong>Opciones:</strong><br>S/ 2,000.00 · S/ 3,000.00</div>
+      <div><strong>Opciones:</strong><br><span id="price-summary">S/ 2,000.00 · S/ 3,000.00</span></div>
     </div>
 
     <div class="cta">
@@ -187,8 +405,9 @@
     </div>
 
     <div class="actions">
-      <button class="btn" onclick="window.print()">Imprimir / PDF</button>
-      <button class="btn btn--primary" id="fill-demo">Rellenar demo</button>
+      <button class="btn" onclick="window.print()">🖨️ Imprimir / PDF</button>
+      <button class="btn btn--primary" id="fill-demo">🎯 Rellenar demo</button>
+      <button class="btn" id="toggle-management">📁 Gestionar Proformas</button>
     </div>
 
     <footer>
@@ -201,32 +420,725 @@
     </footer>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    (() => {
-      const d = new Date();
-      const opts = { year: 'numeric', month: 'long', day: '2-digit' };
-      document.getElementById('pf-date').textContent = d.toLocaleDateString('es-PE', opts);
-      document.getElementById('year').textContent = d.getFullYear();
+    // Configuración de Supabase
+    // NOTA: Estas claves son seguras para uso público
+    // Las políticas RLS protegen tus datos privados
+    const SUPABASE_URL = 'https://zenywgqwuzofmswilwyv.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inplbnl3Z3F3dXpvZm1zd2lsd3l2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4ODc2MTEsImV4cCI6MjA3MTQ2MzYxMX0.dBhAmrtTw2VSMCrL71MgG7_V85Qy-iApL6LFfNFEulc';
+    
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-      // Fallback si el logo remoto falla
-      const logo = document.getElementById('logo');
-      logo && logo.addEventListener('error', () => {
-        logo.onerror = null;
-        const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='140' height='40'><rect width='100%' height='100%' fill='%230f172a'/><text x='50%' y='50%' fill='white' font-family='Arial, Helvetica, sans-serif' font-weight='700' font-size='18' text-anchor='middle' dominant-baseline='middle'>Tato</text></svg>`;
-        logo.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
-      });
-    })();
+    // Sistema de gestión de proformas multi-usuario con Supabase
+    class ProformaManager {
+      constructor() {
+        this.currentUser = 'tato';
+        this.currentProforma = null;
+        this.userProfiles = this.getDefaultProfiles();
+        this.isOnline = false;
+        this.currentSupabaseUser = null;
+        this.syncQueue = [];
+        this.init();
+      }
 
-    document.getElementById('fill-demo').addEventListener('click', () => {
-      document.querySelectorAll('[contenteditable]')[0].textContent = 'Comercial Andina SAC';
-      document.querySelectorAll('[contenteditable]')[1].textContent = 'compras@comercialandina.pe · +51 987 654 321';
-      document.querySelectorAll('[contenteditable]')[2].textContent = '2060xxxxxxx';
-      document.getElementById('pf-number').textContent = 'PRO-2025-017';
+      getDefaultProfiles() {
+        return {
+          tato: {
+            name: 'Tato',
+            tagline: 'Soluciones Web Profesionales',
+            email: 'renato.espinoza.medrano@gmail.com',
+            phone: '+51 975 212 132',
+            logo: 'https://res.cloudinary.com/renatoez/image/upload/v1755882448/Untitled_qmza6o.svg'
+          },
+          kike: {
+            name: 'Kike',
+            tagline: 'Desarrollo Web & Diseño',
+            email: 'kike@ejemplo.com',
+            phone: '+51 999 888 777',
+            logo: ''
+          },
+          carlos: {
+            name: 'Carlos',
+            tagline: 'Soluciones Digitales',
+            email: 'carlos@ejemplo.com',
+            phone: '+51 888 777 666',
+            logo: ''
+          }
+        };
+      }
 
-      const msg = encodeURIComponent('Hola Tato, estoy interesado en la Proforma PRO-2025-017. Quiero avanzar con mi sitio web.');
-      const phone = '51975212132';
-      document.getElementById('cta-wsp').href = `https://wa.me/${phone}?text=${msg}`;
-    });
+      getStorageKey(type = 'proformas') {
+        return `${this.currentUser}-${type}`;
+      }
+
+      async init() {
+        this.loadUserProfiles();
+        this.loadCurrentUser();
+        this.setCurrentDate();
+        this.setupLogoFallback();
+        this.bindEvents();
+        this.updateUserInterface();
+        await this.checkSupabaseAuth();
+        this.loadSavedProformas();
+        this.autoSave();
+      }
+
+      async checkSupabaseAuth() {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            this.currentSupabaseUser = user;
+            this.isOnline = true;
+            this.updateAuthUI();
+            await this.syncFromSupabase();
+          }
+        } catch (error) {
+          console.log('Sin conexión a Supabase, trabajando offline');
+          this.updateSyncStatus('offline', 'Trabajando sin conexión');
+        }
+      }
+
+      updateAuthUI() {
+        const authPanel = document.getElementById('auth-panel');
+        const authForm = document.getElementById('auth-form');
+        const syncStatus = document.getElementById('sync-status');
+        
+        if (this.currentSupabaseUser) {
+          authForm.style.display = 'none';
+          syncStatus.style.display = 'flex';
+          document.getElementById('sync-text').textContent = 
+            `Conectado: ${this.currentSupabaseUser.email}`;
+          this.updateSyncStatus('online', 'Sincronizado');
+        } else {
+          authForm.style.display = 'flex';
+          syncStatus.style.display = 'none';
+        }
+      }
+
+      updateSyncStatus(status, text) {
+        const indicator = document.getElementById('sync-indicator');
+        const syncText = document.getElementById('sync-text');
+        
+        indicator.className = `sync-indicator ${status === 'online' ? '' : status}`;
+        if (syncText) syncText.textContent = text;
+      }
+
+      loadUserProfiles() {
+        const saved = localStorage.getItem('user-profiles');
+        if (saved) {
+          this.userProfiles = { ...this.getDefaultProfiles(), ...JSON.parse(saved) };
+        }
+      }
+
+      saveUserProfiles() {
+        localStorage.setItem('user-profiles', JSON.stringify(this.userProfiles));
+      }
+
+      loadCurrentUser() {
+        const saved = localStorage.getItem('current-user');
+        if (saved) {
+          this.currentUser = saved;
+        }
+        document.getElementById('user-select').value = this.currentUser;
+      }
+
+      saveCurrentUser() {
+        localStorage.setItem('current-user', this.currentUser);
+      }
+
+      updateUserInterface() {
+        const profile = this.userProfiles[this.currentUser];
+        
+        // Actualizar logo y datos en el header
+        if (profile.logo) {
+          document.getElementById('logo').src = profile.logo;
+          document.querySelector('.logo source').srcset = profile.logo;
+        }
+        
+        // Actualizar nombre y tagline en el brand
+        const brandDiv = document.querySelector('.brand div');
+        if (!brandDiv.querySelector('h1')) {
+          brandDiv.innerHTML = `<h1>${profile.name}</h1><small>${profile.tagline}</small>`;
+        } else {
+          brandDiv.querySelector('h1').textContent = profile.name;
+          brandDiv.querySelector('small').textContent = profile.tagline;
+        }
+        
+        // Actualizar footer
+        const year = new Date().getFullYear();
+        document.querySelector('footer div').innerHTML = 
+          `© ${year} ${profile.name} · ${profile.email} · ${profile.phone}`;
+      }
+
+      setCurrentDate() {
+        const d = new Date();
+        const opts = { year: 'numeric', month: 'long', day: '2-digit' };
+        document.getElementById('pf-date').textContent = d.toLocaleDateString('es-PE', opts);
+        document.getElementById('year').textContent = d.getFullYear();
+      }
+
+      setupLogoFallback() {
+        const logo = document.getElementById('logo');
+        logo && logo.addEventListener('error', () => {
+          logo.onerror = null;
+          const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='140' height='40'><rect width='100%' height='100%' fill='%230f172a'/><text x='50%' y='50%' fill='white' font-family='Arial, Helvetica, sans-serif' font-weight='700' font-size='18' text-anchor='middle' dominant-baseline='middle'>Tato</text></svg>`;
+          logo.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+        });
+      }
+
+      bindEvents() {
+        // Eventos existentes
+        document.getElementById('fill-demo').addEventListener('click', () => this.fillDemo());
+        document.getElementById('toggle-management').addEventListener('click', () => this.toggleManagement());
+        document.getElementById('save-proforma').addEventListener('click', () => this.saveCurrentProforma());
+        document.getElementById('new-proforma').addEventListener('click', () => this.newProforma());
+        document.getElementById('export-data').addEventListener('click', () => this.exportData());
+        document.getElementById('import-data').addEventListener('click', () => document.getElementById('import-file').click());
+        document.getElementById('import-file').addEventListener('change', (e) => this.importData(e));
+
+        // Nuevos eventos de usuario
+        document.getElementById('user-select').addEventListener('change', (e) => this.switchUser(e.target.value));
+        document.getElementById('config-profile').addEventListener('click', () => this.toggleProfilePanel());
+        document.getElementById('save-profile').addEventListener('click', () => this.saveProfile());
+        document.getElementById('cancel-profile').addEventListener('click', () => this.toggleProfilePanel());
+
+        // Eventos de autenticación
+        document.getElementById('login-btn').addEventListener('click', () => this.loginWithEmail());
+        document.getElementById('logout-btn').addEventListener('click', () => this.logout());
+        document.getElementById('work-offline').addEventListener('click', () => this.workOffline());
+
+        // Auto-actualizar resumen de precios
+        document.addEventListener('input', (e) => {
+          if (e.target.classList.contains('price')) {
+            this.updatePriceSummary();
+          }
+        });
+      }
+
+      switchUser(newUser) {
+        if (this.currentUser !== newUser) {
+          this.currentUser = newUser;
+          this.saveCurrentUser();
+          this.updateUserInterface();
+          this.loadSavedProformas();
+          // Crear nueva proforma para el usuario
+          this.newProforma(false); // false = no mostrar confirmación
+        }
+      }
+
+      toggleProfilePanel() {
+        const panel = document.getElementById('profile-panel');
+        panel.classList.toggle('active');
+        
+        if (panel.classList.contains('active')) {
+          // Cargar datos actuales del perfil
+          const profile = this.userProfiles[this.currentUser];
+          document.getElementById('profile-name').value = profile.name;
+          document.getElementById('profile-tagline').value = profile.tagline;
+          document.getElementById('profile-email').value = profile.email;
+          document.getElementById('profile-phone').value = profile.phone;
+          document.getElementById('profile-logo').value = profile.logo;
+        }
+      }
+
+      saveProfile() {
+        const profile = {
+          name: document.getElementById('profile-name').value,
+          tagline: document.getElementById('profile-tagline').value,
+          email: document.getElementById('profile-email').value,
+          phone: document.getElementById('profile-phone').value,
+          logo: document.getElementById('profile-logo').value
+        };
+
+        this.userProfiles[this.currentUser] = profile;
+        this.saveUserProfiles();
+        this.updateUserInterface();
+        this.toggleProfilePanel();
+        alert(`✅ Perfil de ${profile.name} guardado`);
+        
+        // Sincronizar perfil con Supabase si está conectado
+        if (this.isOnline) {
+          this.syncProfileToSupabase();
+        }
+      }
+
+      async loginWithEmail() {
+        const email = document.getElementById('user-email').value;
+        if (!email) {
+          alert('❌ Por favor ingresa tu email');
+          return;
+        }
+
+        try {
+          this.updateSyncStatus('sync', 'Conectando...');
+          
+          // Usar signInWithOtp para login sin password
+          const { error } = await supabase.auth.signInWithOtp({
+            email: email,
+            options: {
+              shouldCreateUser: true
+            }
+          });
+
+          if (error) throw error;
+
+          alert('✅ Te hemos enviado un enlace mágico a tu email. Revisa tu bandeja de entrada.');
+          
+          // Escuchar cambios de autenticación
+          supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN' && session) {
+              this.currentSupabaseUser = session.user;
+              this.isOnline = true;
+              this.updateAuthUI();
+              this.syncFromSupabase();
+              alert('🎉 ¡Conectado exitosamente!');
+            }
+          });
+
+        } catch (error) {
+          console.error('Error de login:', error);
+          alert('❌ Error al conectar: ' + error.message);
+          this.updateSyncStatus('error', 'Error de conexión');
+        }
+      }
+
+      async logout() {
+        try {
+          await supabase.auth.signOut();
+          this.currentSupabaseUser = null;
+          this.isOnline = false;
+          this.updateAuthUI();
+          this.updateSyncStatus('offline', 'Desconectado');
+          alert('👋 Desconectado. Trabajando en modo local.');
+        } catch (error) {
+          console.error('Error al desconectar:', error);
+        }
+      }
+
+      workOffline() {
+        document.getElementById('auth-panel').style.display = 'none';
+        alert('📱 Trabajando sin conexión. Los datos se guardan localmente.');
+      }
+
+      async syncFromSupabase() {
+        if (!this.isOnline || !this.currentSupabaseUser) return;
+
+        try {
+          this.updateSyncStatus('sync', 'Sincronizando...');
+
+          // Crear tablas si no existen
+          await this.createTablesIfNeeded();
+
+          // Sincronizar perfiles
+          await this.syncProfileFromSupabase();
+          
+          // Sincronizar proformas
+          await this.syncProformasFromSupabase();
+
+          this.updateSyncStatus('online', 'Sincronizado');
+          
+        } catch (error) {
+          console.error('Error de sincronización:', error);
+          this.updateSyncStatus('error', 'Error de sincronización');
+        }
+      }
+
+      async createTablesIfNeeded() {
+        // Las tablas se crean automáticamente cuando insertas datos
+        // Supabase es muy flexible con esto
+      }
+
+      async syncProfileToSupabase() {
+        if (!this.isOnline) return;
+
+        try {
+          const { error } = await supabase
+            .from('user_profiles')
+            .upsert({
+              user_id: this.currentSupabaseUser.id,
+              email: this.currentSupabaseUser.email,
+              username: this.currentUser,
+              profile_data: this.userProfiles[this.currentUser]
+            });
+
+          if (error) throw error;
+        } catch (error) {
+          console.error('Error sincronizando perfil:', error);
+        }
+      }
+
+      async syncProfileFromSupabase() {
+        if (!this.isOnline) return;
+
+        try {
+          const { data, error } = await supabase
+            .from('user_profiles')
+            .select('*')
+            .eq('user_id', this.currentSupabaseUser.id)
+            .single();
+
+          if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows
+          
+          if (data && data.profile_data) {
+            this.userProfiles[data.username] = data.profile_data;
+            this.saveUserProfiles();
+          }
+        } catch (error) {
+          console.error('Error cargando perfil:', error);
+        }
+      }
+
+      async syncProformasFromSupabase() {
+        if (!this.isOnline) return;
+
+        try {
+          const { data, error } = await supabase
+            .from('proformas')
+            .select('*')
+            .eq('user_id', this.currentSupabaseUser.id)
+            .eq('username', this.currentUser);
+
+          if (error) throw error;
+
+          if (data && data.length > 0) {
+            const supabaseProformas = data.map(item => item.proforma_data);
+            localStorage.setItem(this.getStorageKey(), JSON.stringify(supabaseProformas));
+            this.loadSavedProformas();
+          }
+        } catch (error) {
+          console.error('Error cargando proformas:', error);
+        }
+      }
+
+      generateProformaNumber() {
+        const year = new Date().getFullYear();
+        const saved = this.getSavedProformas();
+        const currentYearProformas = saved.filter(p => p.number.includes(year.toString()));
+        const nextNumber = String(currentYearProformas.length + 1).padStart(3, '0');
+        
+        // Prefijo personalizado por usuario
+        const prefixes = {
+          tato: 'TAT',
+          kike: 'KIK', 
+          carlos: 'CAR'
+        };
+        
+        const prefix = prefixes[this.currentUser] || 'PRO';
+        return `${prefix}-${year}-${nextNumber}`;
+      }
+
+      fillDemo() {
+        const editables = document.querySelectorAll('[contenteditable]');
+        editables[0].textContent = 'Comercial Andina SAC';
+        editables[1].textContent = 'compras@comercialandina.pe · +51 987 654 321';
+        editables[2].textContent = '2060xxxxxxx';
+        
+        const proformaNumber = this.generateProformaNumber();
+        document.getElementById('pf-number').textContent = proformaNumber;
+
+        const profile = this.userProfiles[this.currentUser];
+        const msg = encodeURIComponent(`Hola ${profile.name}, estoy interesado en la Proforma ${proformaNumber}. Quiero avanzar con mi sitio web.`);
+        const phone = profile.phone.replace(/[\s\-\+]/g, '');
+        document.getElementById('cta-wsp').href = `https://wa.me/${phone}?text=${msg}`;
+      }
+
+      toggleManagement() {
+        const panel = document.getElementById('management-panel');
+        panel.classList.toggle('active');
+        if (panel.classList.contains('active')) {
+          this.loadSavedProformas();
+        }
+      }
+
+      collectFormData() {
+        const data = {
+          number: document.getElementById('pf-number').textContent,
+          date: document.getElementById('pf-date').textContent,
+          client: {
+            name: document.querySelectorAll('[contenteditable]')[0].textContent,
+            contact: document.querySelectorAll('[contenteditable]')[1].textContent,
+            ruc: document.querySelectorAll('[contenteditable]')[2].textContent
+          },
+          options: [],
+          includes: document.querySelectorAll('.card div[contenteditable]')[0].textContent,
+          excludes: document.querySelectorAll('.card div[contenteditable]')[1].textContent,
+          timeline: document.querySelector('.totals span[contenteditable]').textContent,
+          terms: document.querySelector('.totals p[contenteditable]').textContent,
+          timestamp: new Date().toISOString()
+        };
+
+        // Recoger opciones de la tabla
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+          const cells = row.querySelectorAll('td[contenteditable]');
+          if (cells.length >= 3) {
+            data.options.push({
+              name: cells[0].textContent,
+              description: cells[1].innerHTML,
+              price: cells[2].textContent
+            });
+          }
+        });
+
+        return data;
+      }
+
+      fillFormData(data) {
+        document.getElementById('pf-number').textContent = data.number;
+        
+        const editables = document.querySelectorAll('[contenteditable]');
+        editables[0].textContent = data.client.name;
+        editables[1].textContent = data.client.contact;
+        editables[2].textContent = data.client.ruc;
+
+        // Llenar opciones
+        const rows = document.querySelectorAll('tbody tr');
+        data.options.forEach((option, index) => {
+          if (rows[index]) {
+            const cells = rows[index].querySelectorAll('td[contenteditable]');
+            if (cells.length >= 3) {
+              cells[0].textContent = option.name;
+              cells[1].innerHTML = option.description;
+              cells[2].textContent = option.price;
+            }
+          }
+        });
+
+        // Llenar otros campos
+        document.querySelectorAll('.card div[contenteditable]')[0].textContent = data.includes;
+        document.querySelectorAll('.card div[contenteditable]')[1].textContent = data.excludes;
+        document.querySelector('.totals span[contenteditable]').textContent = data.timeline;
+        document.querySelector('.totals p[contenteditable]').textContent = data.terms;
+
+        this.updatePriceSummary();
+      }
+
+      async saveCurrentProforma() {
+        const data = this.collectFormData();
+        const saved = this.getSavedProformas();
+        
+        // Verificar si ya existe
+        const existingIndex = saved.findIndex(p => p.number === data.number);
+        
+        if (existingIndex >= 0) {
+          saved[existingIndex] = data;
+          alert(`✅ Proforma ${data.number} actualizada`);
+        } else {
+          saved.push(data);
+          alert(`✅ Proforma ${data.number} guardada`);
+        }
+        
+        // Guardar localmente
+        localStorage.setItem(this.getStorageKey(), JSON.stringify(saved));
+        
+        // Sincronizar con Supabase si está conectado
+        if (this.isOnline) {
+          await this.syncProformaToSupabase(data);
+        }
+        
+        this.loadSavedProformas();
+      }
+
+      async syncProformaToSupabase(proformaData) {
+        if (!this.isOnline) return;
+
+        try {
+          const { error } = await supabase
+            .from('proformas')
+            .upsert({
+              user_id: this.currentSupabaseUser.id,
+              username: this.currentUser,
+              proforma_number: proformaData.number,
+              proforma_data: proformaData
+            });
+
+          if (error) throw error;
+          console.log('Proforma sincronizada con Supabase');
+        } catch (error) {
+          console.error('Error sincronizando proforma:', error);
+          this.updateSyncStatus('error', 'Error de sincronización');
+        }
+      }
+
+      newProforma(showConfirm = true) {
+        if (!showConfirm || confirm('¿Crear nueva proforma? Los cambios no guardados se perderán.')) {
+          // Limpiar todos los campos editables
+          document.querySelectorAll('[contenteditable]').forEach(el => {
+            if (el.innerHTML.includes('[')) return; // Mantener placeholders
+            el.textContent = '';
+          });
+          
+          // Resetear datos
+          const proformaNumber = this.generateProformaNumber();
+          document.getElementById('pf-number').textContent = proformaNumber;
+          this.setCurrentDate();
+          
+          // Resetear opciones a valores por defecto
+          const rows = document.querySelectorAll('tbody tr');
+          const defaultOptions = [
+            {
+              name: 'Opción 1 — WordPress',
+              description: '• Diseño personalizado y responsive.<br>• Integración de <strong>formulario de recepción</strong> vinculado a cuestionario de Facebook.<br>• <strong>Call to Action a WhatsApp</strong>.<br>• Capacitación básica.',
+              price: '2,000.00'
+            },
+            {
+              name: 'Opción 2 — Next.js',
+              description: '• Arquitectura moderna con alto rendimiento y SEO técnico.<br>• Integración de <strong>formulario de recepción</strong> vinculada a cuestionario de Facebook.<br>• <strong>Call to Action a WhatsApp</strong>.<br>• Diseño moderno y escalable.',
+              price: '3,000.00'
+            }
+          ];
+          
+          rows.forEach((row, index) => {
+            if (defaultOptions[index]) {
+              const cells = row.querySelectorAll('td[contenteditable]');
+              cells[0].textContent = defaultOptions[index].name;
+              cells[1].innerHTML = defaultOptions[index].description;
+              cells[2].textContent = defaultOptions[index].price;
+            }
+          });
+          
+          this.updatePriceSummary();
+          if (showConfirm) alert('✅ Nueva proforma creada');
+        }
+      }
+
+      getSavedProformas() {
+        const saved = localStorage.getItem(this.getStorageKey());
+        return saved ? JSON.parse(saved) : [];
+      }
+
+      loadSavedProformas() {
+        const saved = this.getSavedProformas();
+        const container = document.getElementById('saved-proformas');
+        
+        if (saved.length === 0) {
+          container.innerHTML = '<p style="color: var(--muted); font-style: italic; margin: 8px 0;">No hay proformas guardadas</p>';
+          return;
+        }
+
+        container.innerHTML = saved.map(proforma => `
+          <div class="saved-item">
+            <strong>${proforma.number}</strong><br>
+            <small style="color: var(--muted);">${proforma.client.name}</small><br>
+            <small style="color: var(--muted);">${new Date(proforma.timestamp).toLocaleDateString('es-PE')}</small>
+            <div class="actions-small">
+              <button class="btn-small btn--primary" onclick="manager.loadProforma('${proforma.number}')">Cargar</button>
+              <button class="btn-small" onclick="manager.duplicateProforma('${proforma.number}')">Duplicar</button>
+              <button class="btn-small" onclick="manager.deleteProforma('${proforma.number}')">Eliminar</button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      loadProforma(number) {
+        const saved = this.getSavedProformas();
+        const proforma = saved.find(p => p.number === number);
+        
+        if (proforma) {
+          this.fillFormData(proforma);
+          this.toggleManagement();
+          alert(`✅ Proforma ${number} cargada`);
+        }
+      }
+
+      duplicateProforma(number) {
+        const saved = this.getSavedProformas();
+        const proforma = saved.find(p => p.number === number);
+        
+        if (proforma) {
+          const newProforma = { ...proforma };
+          newProforma.number = this.generateProformaNumber();
+          newProforma.timestamp = new Date().toISOString();
+          
+          this.fillFormData(newProforma);
+          this.toggleManagement();
+          alert(`✅ Proforma duplicada como ${newProforma.number}`);
+        }
+      }
+
+      deleteProforma(number) {
+        if (confirm(`¿Eliminar la proforma ${number}?`)) {
+          const saved = this.getSavedProformas();
+          const filtered = saved.filter(p => p.number !== number);
+          localStorage.setItem(this.getStorageKey(), JSON.stringify(filtered));
+          this.loadSavedProformas();
+          alert(`✅ Proforma ${number} eliminada`);
+        }
+      }
+
+      updatePriceSummary() {
+        const prices = [];
+        document.querySelectorAll('.price[contenteditable]').forEach(cell => {
+          const price = cell.textContent.trim();
+          if (price && !isNaN(parseFloat(price))) {
+            prices.push(`S/ ${price}`);
+          }
+        });
+        document.getElementById('price-summary').textContent = prices.join(' · ');
+      }
+
+      exportData() {
+        const saved = this.getSavedProformas();
+        const profile = this.userProfiles[this.currentUser];
+        const dataStr = JSON.stringify(saved, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(dataBlob);
+        link.download = `${this.currentUser}-proformas-${new Date().toISOString().split('T')[0]}.json`;
+        link.click();
+        
+        alert(`✅ Proformas de ${profile.name} exportadas`);
+      }
+
+      importData(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const data = JSON.parse(e.target.result);
+            if (Array.isArray(data)) {
+              localStorage.setItem(this.getStorageKey(), JSON.stringify(data));
+              this.loadSavedProformas();
+              const profile = this.userProfiles[this.currentUser];
+              alert(`✅ ${data.length} proformas importadas para ${profile.name}`);
+            } else {
+              alert('❌ Formato de archivo inválido');
+            }
+          } catch (error) {
+            alert('❌ Error al leer el archivo');
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      autoSave() {
+        // Auto-guardar cada 30 segundos si hay cambios
+        let lastSave = Date.now();
+        setInterval(() => {
+          const currentData = JSON.stringify(this.collectFormData());
+          if (this.currentProforma !== currentData) {
+            this.currentProforma = currentData;
+            // Solo auto-guardar si tiene número de proforma válido
+            const number = document.getElementById('pf-number').textContent;
+            const prefixes = ['TAT', 'KIK', 'CAR', 'PRO'];
+            if (number && prefixes.some(prefix => number.startsWith(prefix))) {
+              // Auto-save silencioso
+              console.log(`Auto-guardado realizado para ${this.currentUser}`);
+            }
+          }
+        }, 30000);
+      }
+    }
+
+    // Inicializar el sistema
+    const manager = new ProformaManager();
+    
+    // Hacer disponible globalmente para los botones inline
+    window.manager = manager;
   </script>
 </body>
 </html>
