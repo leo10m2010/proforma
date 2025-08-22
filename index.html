@@ -4,312 +4,56 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Proforma — Tato</title>
-  <style>
-    :root {
-      --primary: #0f172a;
-      --accent: #c6a769;
-      --muted: #64748b;
-      --border: #e5e7eb;
-      --bg: #ffffff;
-      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-    }
-
-    @page {
-      size: A4;
-      margin: 10mm;
-    }
-
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
-      color: var(--primary);
-      background: var(--bg);
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-
-    .page {
-      width: 100%;
-      max-width: 210mm;
-      margin: auto;
-      padding: 18px;
-      background: #fff;
-      border-radius: 12px;
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 2px solid var(--border);
-      padding-bottom: 8px;
-      margin-bottom: 8px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .brand picture.logo, .brand img#logo {
-      height: 50px;
-      width: auto;
-      display: block;
-    }
-
-    .brand h1 { font-size: 22px; margin: 0; }
-
-    .titlebox { text-align: right; }
-    .titlebox h2 { margin: 0; font-size: 20px; text-transform: uppercase; }
-    .badge { background: var(--accent); color: #fff; padding: 3px 8px; border-radius: 20px; font-size: 11px; }
-
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .panel { border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
-    .kv { display: grid; grid-template-columns: 110px 1fr; font-size: 13px; row-gap: 4px; }
-
-    .section-title { margin: 14px 0 6px; font-size: 14px; color: var(--muted); text-transform: uppercase; }
-
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th, td { padding: 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
-    th { text-transform: uppercase; font-size: 11px; color: var(--muted); }
-    .price { text-align: right; font-weight: 700; }
-
-    .incl { font-size: 12px; color: var(--muted); line-height: 1.4; }
-
-    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
-    .card { border: 1px solid var(--border); border-radius: 8px; padding: 8px; font-size: 12px; }
-    .card h4 { margin: 0 0 4px; font-size: 13px; }
-
-    .totals { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; }
-
-    .cta { margin-top: 10px; border: 1px dashed var(--border); border-radius: 8px; padding: 8px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
-    .cta a { text-decoration: none; font-weight: 600; color: #fff; background: var(--primary); padding: 6px 10px; border-radius: 20px; font-size: 12px; }
-
-    footer { border-top: 1px solid var(--border); margin-top: 12px; padding-top: 6px; font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; }
-
-    .actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
-    .btn { padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; cursor: pointer; background: #fff; }
-    .btn--primary { background: var(--primary); color: #fff; }
-    .btn--success { background: #059669; color: #fff; }
-    .btn--warning { background: #d97706; color: #fff; }
-    
-    .management-panel { 
-      background: #f8fafc; 
-      border: 1px solid var(--border); 
-      border-radius: 8px; 
-      padding: 12px; 
-      margin-bottom: 16px; 
-      display: none; 
-    }
-    .management-panel.active { display: block; }
-    
-    .user-selector {
-      background: var(--primary);
-      color: white;
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .user-select {
-      padding: 6px 10px;
-      border-radius: 6px;
-      border: none;
-      font-size: 12px;
-      background: white;
-      color: var(--primary);
-    }
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-    }
-    
-    .profile-panel {
-      background: #fffbeb;
-      border: 1px solid #fbbf24;
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 16px;
-      display: none;
-    }
-    .profile-panel.active { display: block; }
-    .profile-form {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      font-size: 12px;
-    }
-    .profile-form input, .profile-form textarea {
-      padding: 6px 8px;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      font-size: 12px;
-    }
-    
-    .auth-panel {
-      background: #f0f9ff;
-      border: 1px solid #0ea5e9;
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 16px;
-      text-align: center;
-    }
-    .auth-form {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      align-items: center;
-      margin-top: 12px;
-    }
-    .auth-form input {
-      padding: 8px 12px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 12px;
-    }
-    .sync-status {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      margin-top: 8px;
-    }
-    .sync-indicator {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #10b981;
-    }
-    .sync-indicator.offline {
-      background: #f59e0b;
-    }
-    .sync-indicator.error {
-      background: #ef4444;
-    }
-    
-    /* Toast Notifications */
-    .toast-container {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .toast {
-      background: white;
-      border-radius: 8px;
-      padding: 12px 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      border-left: 4px solid;
-      max-width: 350px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transform: translateX(100%);
-      transition: transform 0.3s ease;
-      font-size: 13px;
-    }
-    .toast.show {
-      transform: translateX(0);
-    }
-    .toast.success {
-      border-color: #10b981;
-      background: #f0fdf4;
-    }
-    .toast.error {
-      border-color: #ef4444;
-      background: #fef2f2;
-    }
-    .toast.warning {
-      border-color: #f59e0b;
-      background: #fffbeb;
-    }
-    .toast.info {
-      border-color: #3b82f6;
-      background: #eff6ff;
-    }
-    .toast-icon {
-      font-size: 16px;
-      flex-shrink: 0;
-    }
-    .toast-content {
-      flex: 1;
-    }
-    .toast-title {
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-    .toast-message {
-      color: var(--muted);
-      font-size: 12px;
-    }
-    .toast-close {
-      background: none;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-      opacity: 0.5;
-      flex-shrink: 0;
-    }
-    .toast-close:hover {
-      opacity: 1;
-    }
-    .saved-proformas { 
-      display: grid; 
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
-      gap: 8px; 
-      margin-top: 8px; 
-    }
-    .saved-item { 
-      background: #fff; 
-      border: 1px solid var(--border); 
-      border-radius: 6px; 
-      padding: 8px; 
-      font-size: 12px; 
-    }
-    .saved-item .actions-small { 
-      display: flex; 
-      gap: 4px; 
-      margin-top: 6px; 
-    }
-    .btn-small { 
-      padding: 3px 6px; 
-      font-size: 10px; 
-      border-radius: 4px; 
-      border: 1px solid var(--border); 
-      cursor: pointer; 
-    }
-
-    @media print {
-      body { background: white !important; }
-      .page { 
-        border: none; 
-        box-shadow: none; 
-        margin: 0; 
-        padding: 15mm; 
-        max-width: none;
-        width: 100%;
-      }
-      .actions, .btn, .cta, .management-panel, .user-selector, .profile-panel, .auth-panel { 
-        display: none !important; 
-      }
-      header { margin-bottom: 20px; }
-      .section-title { margin-top: 20px; }
-      table { page-break-inside: avoid; }
-      .grid-2 { page-break-inside: avoid; }
-    }
-  </style>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="page" id="doc">
+  <!-- Pantalla de Login -->
+  <div class="login-screen" id="login-screen">
+    <div class="login-card">
+      <h1>🚀 Proforma Manager</h1>
+      <p>Selecciona tu perfil e ingresa tu PIN para acceder</p>
+      
+      <div class="user-selection" id="user-selection">
+        <div class="user-option" data-user="tato">
+          <div class="user-avatar">T</div>
+          <div class="user-info">
+            <h3>Tato</h3>
+            <p>Soluciones Web Profesionales</p>
+          </div>
+        </div>
+        
+        <div class="user-option" data-user="kike">
+          <div class="user-avatar" style="background: #10b981;">K</div>
+          <div class="user-info">
+            <h3>Kike</h3>
+            <p>Desarrollo y Consultoría</p>
+          </div>
+        </div>
+        
+        <div class="user-option" data-user="carlos">
+          <div class="user-avatar" style="background: #f59e0b;">C</div>
+          <div class="user-info">
+            <h3>Carlos</h3>
+            <p>Diseño y Marketing Digital</p>
+          </div>
+        </div>
+      </div>
+      
+      <input type="password" class="pin-input" id="login-pin" placeholder="••••" maxlength="4">
+      
+      <div class="login-actions">
+        <button class="btn-login primary" id="btn-login" disabled>🔐 Conectar</button>
+        <button class="btn-login secondary" id="btn-offline">📱 Trabajar Sin Conexión</button>
+      </div>
+      
+      <div class="offline-notice" id="offline-notice" style="display: none;">
+        Sin conexión a internet. Podrás sincronizar cuando vuelvas a estar en línea.
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="doc" style="display: none;">
     <header>
       <div class="brand">
         <picture class="logo">
@@ -326,79 +70,226 @@
       </div>
     </header>
 
-    <div class="auth-panel" id="auth-panel">
-      <h3 style="margin: 0 0 8px; font-size: 14px;">☁️ Sincronización Rápida</h3>
-      <p style="margin: 0 0 8px; font-size: 12px; color: var(--muted);">
-        Ingresa tu PIN para sincronizar proformas instantáneamente
-      </p>
-      <div class="auth-form" id="auth-form">
-        <input type="password" id="user-pin" placeholder="PIN (4 dígitos)" maxlength="4" style="flex: 1; max-width: 150px; text-align: center; font-size: 16px; letter-spacing: 2px;">
-        <button class="btn btn--primary" id="login-btn">🔑 Conectar</button>
-        <button class="btn" id="work-offline">📱 Sin conexión</button>
+
+
+    <!-- Panel de Usuario Moderno -->
+    <div class="modern-user-panel">
+      <div class="user-profile-card">
+        <div class="user-avatar-section">
+          <div class="user-avatar-display" id="current-user-avatar">T</div>
+          <div class="user-details">
+            <h3 class="user-name" id="current-user-name">Tato</h3>
+            <p class="user-role" id="current-user-role">Soluciones Web Profesionales</p>
+          </div>
+        </div>
+        
+        <div class="user-actions">
+          <button class="action-btn config-btn" id="config-profile" title="Configurar Perfil">
+            <span class="btn-icon">⚙️</span>
+            <span class="btn-text">Configurar</span>
+          </button>
+          <button class="action-btn switch-btn" id="switch-user" title="Cambiar Usuario">
+            <span class="btn-icon">🔄</span>
+            <span class="btn-text">Cambiar</span>
+          </button>
+          <button class="action-btn logout-btn" id="logout-main" title="Cerrar Sesión">
+            <span class="btn-icon">🚪</span>
+            <span class="btn-text">Salir</span>
+          </button>
+        </div>
       </div>
-      <div class="sync-status" id="sync-status" style="display: none;">
-        <div class="sync-indicator" id="sync-indicator"></div>
-        <span id="sync-text">Conectado y sincronizado</span>
-        <button class="btn" id="logout-btn" style="margin-left: auto;">🚪 Desconectar</button>
+      
+      <div class="user-stats">
+        <div class="stat-item">
+          <span class="stat-number" id="user-proformas-count">0</span>
+          <span class="stat-label">Proformas</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="user-last-activity">Hoy</span>
+          <span class="stat-label">Última actividad</span>
+        </div>
       </div>
     </div>
 
-    <div class="user-selector">
-      <div class="user-info">
-        👤 <strong>Usuario:</strong>
-        <select class="user-select" id="user-select">
-          <option value="tato">Tato (Renato)</option>
-          <option value="kike">Kike</option>
-          <option value="carlos">Carlos</option>
-        </select>
-        <button class="btn" id="config-profile" style="margin-left: 10px;">⚙️ Configurar</button>
+    <!-- Panel de Cambio de Usuario -->
+    <div class="user-switch-panel" id="user-switch-panel">
+      <div class="switch-header">
+        <h3>Cambiar Usuario</h3>
+        <button class="close-btn" id="close-switch">&times;</button>
       </div>
-      <div style="font-size: 11px; opacity: 0.8;">
-        Cada usuario tiene sus propias proformas y numeración
+      <div class="users-grid">
+        <div class="user-card" data-user="tato">
+          <div class="card-avatar">T</div>
+          <div class="card-info">
+            <h4>Tato</h4>
+            <p>Soluciones Web Profesionales</p>
+          </div>
+          <div class="card-badge">Activo</div>
+        </div>
+        <div class="user-card" data-user="kike">
+          <div class="card-avatar" style="background: #6b7280;">K</div>
+          <div class="card-info">
+            <h4>Kike</h4>
+            <p>Desarrollo y Consultoría</p>
+          </div>
+        </div>
+        <div class="user-card" data-user="carlos">
+          <div class="card-avatar" style="background: #9ca3af;">C</div>
+          <div class="card-info">
+            <h4>Carlos</h4>
+            <p>Diseño y Marketing Digital</p>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="profile-panel" id="profile-panel">
-      <h3 style="margin: 0 0 12px; font-size: 14px;">⚙️ Configuración de Perfil</h3>
-      <div class="profile-form">
-        <div>
-          <label><strong>Nombre/Empresa:</strong></label>
-          <input type="text" id="profile-name" placeholder="Ej: Tato Solutions">
+    <!-- Panel de Configuración Rediseñado -->
+    <div class="modern-profile-panel" id="profile-panel">
+      <div class="profile-container">
+        <!-- Header con Vista Previa -->
+        <div class="config-header">
+          <div class="config-title">
+            <h2>✨ Configuración de Perfil</h2>
+            <p>Personaliza tu perfil profesional</p>
+          </div>
+          <button class="close-config" id="cancel-profile">&times;</button>
         </div>
-        <div>
-          <label><strong>Tagline:</strong></label>
-          <input type="text" id="profile-tagline" placeholder="Ej: Soluciones Web Profesionales">
+
+        <div class="config-content">
+          <!-- Vista Previa en Tiempo Real -->
+          <div class="profile-preview">
+            <h3>Vista Previa</h3>
+            <div class="preview-card">
+              <div class="preview-logo">
+                <img id="preview-logo-img" src="" alt="Logo" style="display: none;">
+                <div class="preview-avatar" id="preview-avatar">T</div>
+              </div>
+              <div class="preview-info">
+                <h4 id="preview-name">Nombre de la Empresa</h4>
+                <p id="preview-tagline">Tu tagline aparecerá aquí</p>
+                <div class="preview-contact">
+                  <span id="preview-email">📧 email@ejemplo.com</span>
+                  <span id="preview-phone">📱 +51 999 999 999</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Formulario Dividido en Secciones -->
+          <div class="config-form">
+            <!-- Información Básica -->
+            <div class="form-section">
+              <h4 class="section-title">
+                <span class="section-icon">🏢</span>
+                Información de la Empresa
+              </h4>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Nombre/Empresa</label>
+                  <input type="text" class="form-input" id="profile-name" placeholder="Ej: Tato Solutions">
+                  <div class="input-feedback" id="name-feedback"></div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Tagline/Eslogan</label>
+                  <input type="text" class="form-input" id="profile-tagline" placeholder="Ej: Soluciones Web Profesionales">
+                  <div class="input-feedback" id="tagline-feedback"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Información de Contacto -->
+            <div class="form-section">
+              <h4 class="section-title">
+                <span class="section-icon">📞</span>
+                Información de Contacto
+              </h4>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Email Profesional</label>
+                  <input type="email" class="form-input" id="profile-email" placeholder="contacto@ejemplo.com">
+                  <div class="input-feedback" id="email-feedback"></div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Teléfono/WhatsApp</label>
+                  <input type="text" class="form-input" id="profile-phone" placeholder="+51 975 212 132">
+                  <div class="input-feedback" id="phone-feedback"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Imagen y Branding -->
+            <div class="form-section">
+              <h4 class="section-title">
+                <span class="section-icon">🎨</span>
+                Imagen y Branding
+              </h4>
+              
+              <div class="logo-upload-section">
+                <div class="form-group">
+                  <label class="form-label">URL del Logo</label>
+                  <div class="logo-input-group">
+                    <input type="url" class="form-input" id="profile-logo" placeholder="https://mi-logo.com/logo.svg">
+                    <button type="button" class="test-logo-btn" id="test-logo">Probar</button>
+                  </div>
+                  <div class="input-feedback" id="logo-feedback"></div>
+                  <div class="logo-help">
+                    <span class="help-icon">💡</span>
+                    <span>Usa Cloudinary, Imgur o cualquier URL pública de imagen</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Seguridad -->
+            <div class="form-section">
+              <h4 class="section-title">
+                <span class="section-icon">🔐</span>
+                Seguridad y Acceso
+              </h4>
+              
+              <div class="pin-section">
+                <div class="form-group">
+                  <label class="form-label">PIN de Acceso (4 dígitos)</label>
+                  <div class="pin-inputs">
+                    <input type="password" class="pin-input" id="profile-pin" placeholder="••••" maxlength="4">
+                    <input type="password" class="pin-input" id="profile-pin-confirm" placeholder="••••" maxlength="4">
+                  </div>
+                  <div class="input-feedback" id="pin-feedback"></div>
+                  <div class="pin-help">
+                    <span class="help-icon">🔒</span>
+                    <span>Tu PIN personal para acceder a este perfil</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div>
-          <label><strong>Email:</strong></label>
-          <input type="email" id="profile-email" placeholder="contacto@ejemplo.com">
+
+        <!-- Acciones del Footer -->
+        <div class="config-footer">
+          <button class="btn-config secondary" id="reset-profile">
+            <span class="btn-icon">🔄</span>
+            Resetear
+          </button>
+          <div class="main-actions">
+            <button class="btn-config secondary" id="cancel-profile-alt">
+              <span class="btn-icon">✖</span>
+              Cancelar
+            </button>
+            <button class="btn-config primary" id="save-profile">
+              <span class="btn-icon">💾</span>
+              Guardar Cambios
+            </button>
+          </div>
         </div>
-        <div>
-          <label><strong>Teléfono/WhatsApp:</strong></label>
-          <input type="text" id="profile-phone" placeholder="+51 975 212 132">
-        </div>
-        <div style="grid-column: 1 / -1;">
-          <label><strong>URL del Logo:</strong></label>
-          <input type="url" id="profile-logo" placeholder="https://mi-logo.com/logo.svg">
-          <small style="color: var(--muted); display: block; margin-top: 4px;">
-            Puedes usar Cloudinary, Imgur o cualquier URL de imagen
-          </small>
-        </div>
-        <div>
-          <label><strong>PIN de Sincronización:</strong></label>
-          <input type="password" id="profile-pin" placeholder="4 dígitos" maxlength="4" style="text-align: center; letter-spacing: 2px;">
-          <small style="color: var(--muted); display: block; margin-top: 2px;">
-            Para sincronizar tus datos en la nube
-          </small>
-        </div>
-        <div>
-          <label><strong>Confirmar PIN:</strong></label>
-          <input type="password" id="profile-pin-confirm" placeholder="4 dígitos" maxlength="4" style="text-align: center; letter-spacing: 2px;">
-        </div>
-      </div>
-      <div class="actions" style="margin-top: 12px;">
-        <button class="btn btn--success" id="save-profile">💾 Guardar Perfil</button>
-        <button class="btn" id="cancel-profile">❌ Cancelar</button>
       </div>
     </div>
 
@@ -409,6 +300,7 @@
         <button class="btn btn--warning" id="new-proforma">📄 Nueva</button>
         <button class="btn" id="export-data">📤 Exportar Datos</button>
         <button class="btn" id="import-data">📥 Importar Datos</button>
+        <button class="btn btn--warning" id="reset-profiles">🔄 Resetear Perfiles</button>
         <input type="file" id="import-file" accept=".json" style="display: none;">
       </div>
       <div class="saved-proformas" id="saved-proformas">
@@ -435,25 +327,31 @@
       </div>
     </section>
 
-    <h3 class="section-title">Opciones de desarrollo web</h3>
-    <table>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+      <h3 class="section-title" style="margin: 0;">Opciones de desarrollo web</h3>
+      <button class="btn btn--success" id="add-option" style="font-size: 11px; padding: 4px 8px;">+ Agregar Opción</button>
+    </div>
+    <table id="options-table">
       <thead>
         <tr>
           <th>Opción</th>
           <th>Descripción</th>
           <th class="price">Precio (S/)</th>
+          <th style="width: 40px;">Acción</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
+      <tbody id="options-tbody">
+        <tr data-option-id="1">
           <td contenteditable="true">Opción 1 — WordPress</td>
           <td class="incl" contenteditable="true">• Diseño personalizado y responsive.<br>• Integración de <strong>formulario de recepción</strong> vinculado a cuestionario de Facebook.<br>• <strong>Call to Action a WhatsApp</strong>.<br>• Capacitación básica.</td>
           <td class="price" contenteditable="true">2,000.00</td>
+          <td><button class="btn-small" onclick="manager.removeOption(1)" style="background: #ef4444; color: white; border: none;">×</button></td>
         </tr>
-        <tr>
+        <tr data-option-id="2">
           <td contenteditable="true">Opción 2 — Next.js</td>
           <td class="incl" contenteditable="true">• Arquitectura moderna con alto rendimiento y SEO técnico.<br>• Integración de <strong>formulario de recepción</strong> vinculada a cuestionario de Facebook.<br>• <strong>Call to Action a WhatsApp</strong>.<br>• Diseño moderno y escalable.</td>
           <td class="price" contenteditable="true">3,000.00</td>
+          <td><button class="btn-small" onclick="manager.removeOption(2)" style="background: #ef4444; color: white; border: none;">×</button></td>
         </tr>
       </tbody>
     </table>
@@ -504,6 +402,18 @@
   <!-- Toast Container -->
   <div class="toast-container" id="toast-container"></div>
 
+  <!-- Modal de confirmación -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div class="modal-title" id="modal-title">Confirmar acción</div>
+      <div class="modal-message" id="modal-message">¿Estás seguro?</div>
+      <div class="modal-actions">
+        <button class="modal-btn" id="modal-cancel">Cancelar</button>
+        <button class="modal-btn modal-btn--danger" id="modal-confirm">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     // Configuración de Supabase
@@ -513,6 +423,109 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inplbnl3Z3F3dXpvZm1zd2lsd3l2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4ODc2MTEsImV4cCI6MjA3MTQ2MzYxMX0.dBhAmrtTw2VSMCrL71MgG7_V85Qy-iApL6LFfNFEulc';
     
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Sistema de retry y manejo de errores
+    class NetworkManager {
+      static async retryOperation(operation, maxRetries = 3, delay = 1000) {
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+          try {
+            return await operation();
+          } catch (error) {
+            console.log(`Intento ${attempt}/${maxRetries} falló:`, error.message);
+            
+            if (attempt === maxRetries) {
+              throw error;
+            }
+            
+            // Delay exponencial: 1s, 2s, 4s
+            await new Promise(resolve => setTimeout(resolve, delay * attempt));
+          }
+        }
+      }
+
+      static isNetworkError(error) {
+        return error.message.includes('network') || 
+               error.message.includes('fetch') ||
+               error.message.includes('timeout') ||
+               error.code === 'NETWORK_ERROR';
+      }
+
+      static async withConnectionCheck(operation) {
+        if (!navigator.onLine) {
+          throw new Error('Sin conexión a internet');
+        }
+        return await operation();
+      }
+    }
+
+    // Sistema de encriptación simple para datos locales
+    class CryptoManager {
+      static encode(data, key = 'tato-2025') {
+        try {
+          const str = JSON.stringify(data);
+          return btoa(str + '|' + key);
+        } catch {
+          return data; // Fallback sin encriptar
+        }
+      }
+
+      static decode(encodedData, key = 'tato-2025') {
+        try {
+          const decoded = atob(encodedData);
+          const [str, storedKey] = decoded.split('|');
+          if (storedKey !== key) throw new Error('Invalid key');
+          return JSON.parse(str);
+        } catch {
+          return encodedData; // Fallback para datos no encriptados
+        }
+      }
+    }
+
+    // Sistema de Modal de confirmación
+    class ModalManager {
+      static show(title, message, confirmText = 'Confirmar', type = 'danger') {
+        return new Promise((resolve) => {
+          const overlay = document.getElementById('modal-overlay');
+          const titleEl = document.getElementById('modal-title');
+          const messageEl = document.getElementById('modal-message');
+          const confirmBtn = document.getElementById('modal-confirm');
+          const cancelBtn = document.getElementById('modal-cancel');
+          
+          titleEl.textContent = title;
+          messageEl.textContent = message;
+          confirmBtn.textContent = confirmText;
+          confirmBtn.className = `modal-btn modal-btn--${type}`;
+          
+          overlay.classList.add('show');
+          
+          const handleConfirm = () => {
+            overlay.classList.remove('show');
+            cleanup();
+            resolve(true);
+          };
+          
+          const handleCancel = () => {
+            overlay.classList.remove('show');
+            cleanup();
+            resolve(false);
+          };
+          
+          const cleanup = () => {
+            confirmBtn.removeEventListener('click', handleConfirm);
+            cancelBtn.removeEventListener('click', handleCancel);
+            overlay.removeEventListener('click', handleOverlayClick);
+          };
+          
+          const handleOverlayClick = (e) => {
+            if (e.target === overlay) handleCancel();
+          };
+          
+          confirmBtn.addEventListener('click', handleConfirm);
+          cancelBtn.addEventListener('click', handleCancel);
+          overlay.addEventListener('click', handleOverlayClick);
+        });
+      }
+    }
 
     // Sistema de Toast Notifications
     class ToastManager {
@@ -560,7 +573,9 @@
         this.currentSupabaseUser = null;
         this.syncQueue = [];
         this.pendingSync = []; // Cola de sincronización offline
-        this.init();
+        this.selectedLoginUser = null; // Usuario seleccionado en login
+        this.eventsInitialized = false; // Flag para evitar eventos duplicados
+        // No llamar init() aquí - se llama desde la carga de la página
       }
 
       getDefaultProfiles() {
@@ -596,18 +611,38 @@
         return `${this.currentUser}-${type}`;
       }
 
+      generateSimpleUUID(username, pin) {
+        // Generar un UUID determinístico basado en username y pin
+        const str = `${username}-${pin}`;
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+          const char = str.charCodeAt(i);
+          hash = ((hash << 5) - hash) + char;
+          hash = hash & hash; // Convert to 32bit integer
+        }
+        
+        // Convertir a formato UUID válido
+        const hex = Math.abs(hash).toString(16).padStart(8, '0');
+        return `${hex.slice(0,8)}-${hex.slice(0,4)}-4${hex.slice(0,3)}-a${hex.slice(0,3)}-${hex.slice(0,12)}`.padEnd(36, '0');
+      }
+
       async init() {
+        console.log('🚀 Iniciando ProformaManager...');
+        
         this.loadUserProfiles();
-        this.loadCurrentUser();
         this.loadPendingSync(); // Cargar cola de sincronización
-        this.setCurrentDate();
         this.setupLogoFallback();
         this.bindEvents();
-        this.updateUserInterface();
         this.setupConnectionMonitoring(); // Nuevo: monitoreo de conexión
-        await this.checkSupabaseAuth();
-        this.loadSavedProformas();
-        this.autoSave();
+        this.setupKeyboardShortcuts(); // Atajos de teclado para cambio de usuario
+        
+        // Mostrar pantalla de login al inicio
+        this.showLoginScreen();
+        
+        // Auto-guardar cada 30 segundos
+        setInterval(() => this.autoSave(), 30000);
+        
+        console.log('✅ ProformaManager iniciado correctamente');
       }
 
       loadPendingSync() {
@@ -666,13 +701,9 @@
 
       async checkSupabaseAuth() {
         try {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (user) {
-            this.currentSupabaseUser = user;
-            this.isOnline = true;
-            this.updateAuthUI();
-            await this.syncFromSupabase();
-          }
+          // Verificar conexión básica a Supabase
+          await supabase.from('user_profiles').select('id').limit(1);
+          console.log('Conexión a Supabase verificada');
         } catch (error) {
           console.log('Sin conexión a Supabase, trabajando offline');
           this.updateSyncStatus('offline', 'Trabajando sin conexión');
@@ -680,39 +711,60 @@
       }
 
       updateAuthUI() {
-        const authPanel = document.getElementById('auth-panel');
-        const authForm = document.getElementById('auth-form');
-        const syncStatus = document.getElementById('sync-status');
-        
-        if (this.currentSupabaseUser) {
-          authForm.style.display = 'none';
-          syncStatus.style.display = 'flex';
-          document.getElementById('sync-text').textContent = 
-            `Conectado: ${this.currentSupabaseUser.email}`;
-          this.updateSyncStatus('online', 'Sincronizado');
-        } else {
-          authForm.style.display = 'flex';
-          syncStatus.style.display = 'none';
-        }
+        // Panel de autenticación eliminado - ahora se usa el login principal
+        console.log('Auth UI actualizada - usuario:', this.currentSupabaseUser ? 'conectado' : 'desconectado');
       }
 
-      updateSyncStatus(status, text) {
-        const indicator = document.getElementById('sync-indicator');
-        const syncText = document.getElementById('sync-text');
-        
-        indicator.className = `sync-indicator ${status === 'online' ? '' : status}`;
-        if (syncText) syncText.textContent = text;
+      updateSyncStatus(status, text, details = '') {
+        // Sync status simplificado - solo para logs
+        console.log(`Sync Status: ${status} - ${text}`, details ? `(${details})` : '');
       }
 
       loadUserProfiles() {
-        const saved = localStorage.getItem('user-profiles');
-        if (saved) {
-          this.userProfiles = { ...this.getDefaultProfiles(), ...JSON.parse(saved) };
+        try {
+          const saved = localStorage.getItem('user-profiles');
+          if (saved) {
+            const decoded = CryptoManager.decode(saved);
+            const profiles = typeof decoded === 'string' ? JSON.parse(decoded) : decoded;
+            
+            // Validar estructura de datos
+            if (this.validateProfiles(profiles)) {
+              this.userProfiles = { ...this.getDefaultProfiles(), ...profiles };
+            } else {
+              console.warn('Perfiles corruptos, usando por defecto');
+              this.userProfiles = this.getDefaultProfiles();
+            }
+          }
+        } catch (error) {
+          console.error('Error cargando perfiles:', error);
+          this.userProfiles = this.getDefaultProfiles();
+          ToastManager.show('Perfiles restaurados a valores por defecto', 'warning', 'Datos corruptos');
         }
       }
 
       saveUserProfiles() {
-        localStorage.setItem('user-profiles', JSON.stringify(this.userProfiles));
+        try {
+          const encoded = CryptoManager.encode(this.userProfiles);
+          localStorage.setItem('user-profiles', encoded);
+          
+          // Crear backup automático
+          this.createBackup('profiles', this.userProfiles);
+        } catch (error) {
+          console.error('Error guardando perfiles:', error);
+          ToastManager.show('Error al guardar configuración', 'error', 'Error de almacenamiento');
+        }
+      }
+
+      validateProfiles(profiles) {
+        if (!profiles || typeof profiles !== 'object') return false;
+        
+        for (const [username, profile] of Object.entries(profiles)) {
+          if (!profile.name || !profile.pin || !profile.email) {
+            console.warn(`Perfil inválido para ${username}`);
+            return false;
+          }
+        }
+        return true;
       }
 
       loadCurrentUser() {
@@ -727,35 +779,17 @@
         localStorage.setItem('current-user', this.currentUser);
       }
 
-      updateUserInterface() {
-        const profile = this.userProfiles[this.currentUser];
-        
-        // Actualizar logo y datos en el header
-        if (profile.logo) {
-          document.getElementById('logo').src = profile.logo;
-          document.querySelector('.logo source').srcset = profile.logo;
-        }
-        
-        // Actualizar nombre y tagline en el brand
-        const brandDiv = document.querySelector('.brand div');
-        if (!brandDiv.querySelector('h1')) {
-          brandDiv.innerHTML = `<h1>${profile.name}</h1><small>${profile.tagline}</small>`;
-        } else {
-          brandDiv.querySelector('h1').textContent = profile.name;
-          brandDiv.querySelector('small').textContent = profile.tagline;
-        }
-        
-        // Actualizar footer
-        const year = new Date().getFullYear();
-        document.querySelector('footer div').innerHTML = 
-          `© ${year} ${profile.name} · ${profile.email} · ${profile.phone}`;
-      }
+
 
       setCurrentDate() {
         const d = new Date();
         const opts = { year: 'numeric', month: 'long', day: '2-digit' };
-        document.getElementById('pf-date').textContent = d.toLocaleDateString('es-PE', opts);
-        document.getElementById('year').textContent = d.getFullYear();
+        
+        const pfDate = document.getElementById('pf-date');
+        const yearElement = document.getElementById('year');
+        
+        if (pfDate) pfDate.textContent = d.toLocaleDateString('es-PE', opts);
+        if (yearElement) yearElement.textContent = d.getFullYear();
       }
 
       setupLogoFallback() {
@@ -768,6 +802,14 @@
       }
 
       bindEvents() {
+        // Evitar duplicar eventos
+        if (this.eventsInitialized) {
+          console.log('Eventos ya inicializados, omitiendo...');
+          return;
+        }
+
+        console.log('Inicializando eventos...');
+        
         // Eventos existentes
         document.getElementById('fill-demo').addEventListener('click', () => this.fillDemo());
         document.getElementById('toggle-management').addEventListener('click', () => this.toggleManagement());
@@ -776,22 +818,76 @@
         document.getElementById('export-data').addEventListener('click', () => this.exportData());
         document.getElementById('import-data').addEventListener('click', () => document.getElementById('import-file').click());
         document.getElementById('import-file').addEventListener('change', (e) => this.importData(e));
+        document.getElementById('reset-profiles').addEventListener('click', () => this.resetProfiles());
+        document.getElementById('add-option').addEventListener('click', () => this.addNewOption());
 
-        // Nuevos eventos de usuario
-        document.getElementById('user-select').addEventListener('change', (e) => this.switchUser(e.target.value));
-        document.getElementById('config-profile').addEventListener('click', () => this.toggleProfilePanel());
-        document.getElementById('save-profile').addEventListener('click', () => this.saveProfile());
+        // Nuevos eventos de usuario moderno
+        // Botones del panel de usuario
+        const switchBtn = document.getElementById('switch-user');
+        const logoutBtn = document.getElementById('logout-main');
+        
+        if (switchBtn) {
+          switchBtn.addEventListener('click', () => {
+            console.log('Botón Cambiar Usuario clickeado');
+            this.showUserSwitcher();
+          });
+        } else {
+          console.error('Botón switch-user no encontrado');
+        }
+        
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', () => {
+            console.log('Botón Salir clickeado');
+            this.logout();
+          });
+        } else {
+          console.error('Botón logout-main no encontrado');
+        }
+        
+        document.getElementById('close-switch').addEventListener('click', () => this.hideUserSwitcher());
+        document.getElementById('config-profile').addEventListener('click', () => {
+          console.log('⚙️ Botón Configurar clickeado');
+          this.toggleProfilePanel();
+        });
+        const saveBtn = document.getElementById('save-profile');
+        if (saveBtn) {
+          saveBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            console.log('🎯 Save button clicked!');
+            await this.saveProfile();
+          });
+          console.log('✅ Save button event listener attached');
+        } else {
+          console.error('❌ Save button not found!');
+        }
         document.getElementById('cancel-profile').addEventListener('click', () => this.toggleProfilePanel());
+        document.getElementById('cancel-profile-alt').addEventListener('click', () => this.toggleProfilePanel());
+        document.getElementById('test-logo').addEventListener('click', () => this.testLogoUrl());
+        document.getElementById('reset-profile').addEventListener('click', () => this.resetCurrentProfile());
+        
+        // Eventos de cambio de usuario
+        document.querySelectorAll('.user-card').forEach(card => {
+          card.addEventListener('click', () => {
+            const user = card.dataset.user;
+            if (user !== this.currentUser) {
+              this.switchUser(user);
+              this.hideUserSwitcher();
+            }
+          });
+        });
 
-        // Eventos de autenticación
-        document.getElementById('login-btn').addEventListener('click', () => this.loginWithPin());
-        document.getElementById('logout-btn').addEventListener('click', () => this.logout());
-        document.getElementById('work-offline').addEventListener('click', () => this.workOffline());
+        // Vista previa en tiempo real
+        document.getElementById('profile-name').addEventListener('input', () => this.updatePreview());
+        document.getElementById('profile-tagline').addEventListener('input', () => this.updatePreview());
+        document.getElementById('profile-email').addEventListener('input', () => this.updatePreview());
+        document.getElementById('profile-phone').addEventListener('input', () => this.updatePreview());
+        document.getElementById('profile-logo').addEventListener('input', () => this.updatePreview());
+
+        // Eventos de autenticación eliminados - se usa el nuevo sistema de login
         
         // Permitir login con Enter
-        document.getElementById('user-pin').addEventListener('keypress', (e) => {
-          if (e.key === 'Enter') this.loginWithPin();
-        });
+        // Eventos del nuevo sistema de login
+        this.bindLoginEvents();
 
         // Auto-actualizar resumen de precios
         document.addEventListener('input', (e) => {
@@ -799,9 +895,166 @@
             this.updatePriceSummary();
           }
         });
+        
+        // Marcar eventos como inicializados
+        this.eventsInitialized = true;
+        console.log('Eventos inicializados correctamente');
+      }
+
+      bindLoginEvents() {
+        const userOptions = document.querySelectorAll('.user-option');
+        const pinInput = document.getElementById('login-pin');
+        const loginBtn = document.getElementById('btn-login');
+        const offlineBtn = document.getElementById('btn-offline');
+        
+        // Selección de usuario
+        userOptions.forEach(option => {
+          option.addEventListener('click', () => {
+            console.log('Usuario seleccionado:', option.dataset.user);
+            userOptions.forEach(opt => opt.classList.remove('selected'));
+            option.classList.add('selected');
+            this.selectedLoginUser = option.dataset.user;
+            this.checkLoginForm();
+            console.log('selectedLoginUser actualizado:', this.selectedLoginUser);
+          });
+        });
+        
+        // Input de PIN
+        pinInput.addEventListener('input', () => {
+          // Solo permitir números
+          pinInput.value = pinInput.value.replace(/[^0-9]/g, '');
+          this.checkLoginForm();
+        });
+        
+        pinInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter' && !loginBtn.disabled) {
+            this.performLogin();
+          }
+        });
+        
+        // Botones
+        loginBtn.addEventListener('click', () => this.performLogin());
+        offlineBtn.addEventListener('click', () => this.performOfflineLogin());
+        
+        // Cerrar perfil con Escape o click fuera del panel
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            document.getElementById('profile-panel').classList.remove('active');
+          }
+        });
+        
+        document.getElementById('cancel-profile').addEventListener('click', () => {
+          document.getElementById('profile-panel').classList.remove('active');
+        });
+      }
+
+      checkLoginForm() {
+        const loginBtn = document.getElementById('btn-login');
+        const pinInput = document.getElementById('login-pin');
+        const hasUser = this.selectedLoginUser;
+        const hasPin = pinInput.value.length === 4;
+        
+        console.log('checkLoginForm - hasUser:', hasUser, 'hasPin:', hasPin);
+        loginBtn.disabled = !(hasUser && hasPin);
+      }
+
+      async performLogin() {
+        const pinInput = document.getElementById('login-pin');
+        const pin = pinInput.value;
+        
+        if (!this.selectedLoginUser || pin.length !== 4) {
+          ToastManager.show('Selecciona un usuario e ingresa un PIN válido', 'error', 'Datos incompletos');
+          return;
+        }
+        
+        // Cambiar al usuario seleccionado
+        this.currentUser = this.selectedLoginUser;
+        
+        // Simular loading
+        const loginBtn = document.getElementById('btn-login');
+        const originalText = loginBtn.textContent;
+        loginBtn.textContent = '🔄 Conectando...';
+        loginBtn.disabled = true;
+        
+        try {
+          // Intentar login con PIN
+          await this.loginWithPinNew(pin);
+          
+          // Si llega aquí, el login fue exitoso
+          this.hideLoginScreen();
+          ToastManager.show(`¡Bienvenido ${this.userProfiles[this.currentUser].name}!`, 'success', 'Login exitoso');
+          
+        } catch (error) {
+          console.error('Error en login:', error);
+          ToastManager.show('PIN incorrecto o error de conexión', 'error', 'Error de login');
+          
+          loginBtn.textContent = originalText;
+          loginBtn.disabled = false;
+        }
+      }
+
+      performOfflineLogin() {
+        if (!this.selectedLoginUser) {
+          ToastManager.show('Selecciona un usuario para trabajar offline', 'warning', 'Usuario requerido');
+          return;
+        }
+        
+        this.currentUser = this.selectedLoginUser;
+        this.isOnline = false;
+        this.hideLoginScreen();
+        ToastManager.show(`Trabajando offline como ${this.userProfiles[this.currentUser].name}`, 'info', 'Modo offline');
+      }
+
+      hideLoginScreen() {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('doc').style.display = 'block';
+        this.updateUserInterface();
+        this.newProforma(false);
+      }
+
+      showLoginScreen() {
+        document.getElementById('login-screen').style.display = 'flex';
+        document.getElementById('doc').style.display = 'none';
+        document.getElementById('login-pin').value = '';
+        this.selectedLoginUser = null;
+        
+        // Limpiar selecciones previas
+        document.querySelectorAll('.user-option').forEach(opt => opt.classList.remove('selected'));
+        
+        this.checkLoginForm();
+        console.log('Pantalla de login mostrada');
+      }
+
+      async loginWithPinNew(pin) {
+        const userProfile = this.userProfiles[this.currentUser];
+        
+        if (!userProfile.pin || userProfile.pin !== pin) {
+          throw new Error('PIN incorrecto');
+        }
+        
+        // Intentar conectar a Supabase
+        try {
+          const { data, error } = await supabase.auth.signInAnonymously();
+          
+          if (error) throw error;
+          
+          this.currentSupabaseUser = data.user;
+          this.isOnline = true;
+          
+          // Crear/verificar perfil en Supabase
+          await this.createOrVerifyUserProfile(pin);
+          
+          // Sincronizar datos
+          await this.syncFromSupabase();
+          
+        } catch (error) {
+          console.warn('No se pudo conectar a Supabase, trabajando offline:', error);
+          this.isOnline = false;
+        }
       }
 
       switchUser(newUser) {
+        console.log('🔀 Cambiando usuario de', this.currentUser, 'a', newUser);
         if (this.currentUser !== newUser) {
           this.currentUser = newUser;
           this.saveCurrentUser();
@@ -809,27 +1062,14 @@
           this.loadSavedProformas();
           // Crear nueva proforma para el usuario
           this.newProforma(false); // false = no mostrar confirmación
+          console.log('✅ Usuario cambiado exitosamente a', newUser);
         }
       }
 
-      toggleProfilePanel() {
-        const panel = document.getElementById('profile-panel');
-        panel.classList.toggle('active');
-        
-        if (panel.classList.contains('active')) {
-          // Cargar datos actuales del perfil
-          const profile = this.userProfiles[this.currentUser];
-          document.getElementById('profile-name').value = profile.name;
-          document.getElementById('profile-tagline').value = profile.tagline;
-          document.getElementById('profile-email').value = profile.email;
-          document.getElementById('profile-phone').value = profile.phone;
-          document.getElementById('profile-logo').value = profile.logo;
-          document.getElementById('profile-pin').value = profile.pin || '';
-          document.getElementById('profile-pin-confirm').value = profile.pin || '';
-        }
-      }
 
-      saveProfile() {
+
+      async saveProfile() {
+        console.log('💾 Botón Guardar clickeado - iniciando guardado de perfil...');
         const pin = document.getElementById('profile-pin').value;
         const pinConfirm = document.getElementById('profile-pin-confirm').value;
         
@@ -858,6 +1098,10 @@
         this.updateUserInterface();
         this.toggleProfilePanel();
         
+        console.log('Perfil guardado localmente:', profile);
+        console.log('Usuario actual:', this.currentUser);
+        console.log('Logo actualizado:', profile.logo);
+        
         if (pin && pin !== this.userProfiles[this.currentUser].pin) {
           ToastManager.show('PIN actualizado correctamente', 'success', `Perfil de ${profile.name}`);
         } else {
@@ -865,12 +1109,14 @@
         }
         
         // Sincronizar perfil con Supabase si está conectado
-        if (this.isOnline) {
-          this.syncProfileToSupabase();
+        if (this.isOnline && this.currentSupabaseUser) {
+          await this.syncProfileToSupabase();
+          ToastManager.show('Perfil sincronizado con la nube', 'success', 'Sincronización completa');
         } else {
           // Agregar a cola de sincronización
           this.pendingSync.push({ type: 'profile', data: profile });
           localStorage.setItem('pending-sync', JSON.stringify(this.pendingSync));
+          ToastManager.show('Se sincronizará cuando tengas conexión', 'info', 'Guardado local');
         }
       }
 
@@ -892,41 +1138,123 @@
         try {
           this.updateSyncStatus('sync', 'Conectando...');
           
-          // Simular usuario con el PIN como ID único
-          this.currentSupabaseUser = {
-            id: `user_${this.currentUser}_${pin}`,
-            pin: pin,
-            username: this.currentUser
-          };
+          // Intentar autenticación anónima con retry
+          let authData = null;
           
+          try {
+            authData = await NetworkManager.retryOperation(async () => {
+              return await NetworkManager.withConnectionCheck(async () => {
+                const result = await supabase.auth.signInAnonymously();
+                if (result.error) {
+                  throw new Error(result.error.message);
+                }
+                return result.data;
+              });
+            });
+            console.log('Autenticación anónima exitosa');
+          } catch (authError) {
+            console.log('Autenticación anónima no disponible, usando modo simple');
+            // Generar un ID único pero determinístico
+            authData = {
+              user: {
+                id: this.generateSimpleUUID(this.currentUser, pin),
+                isSimpleAuth: true
+              }
+            };
+          }
+
+          this.currentSupabaseUser = authData.user;
           this.isOnline = true;
+          
+          // Solo crear perfil si tenemos autenticación real
+          if (!this.currentSupabaseUser.isSimpleAuth) {
+            await this.createOrVerifyUserProfile(pin);
+          }
+          
           this.updateAuthUI();
           await this.syncFromSupabase();
           ToastManager.show('Datos sincronizados desde la nube', 'success', '¡Conectado exitosamente!');
 
         } catch (error) {
           console.error('Error de conexión:', error);
-          ToastManager.show('Error al conectar con la nube', 'error', 'Error de conexión');
-          this.updateSyncStatus('error', 'Error de conexión');
+          ToastManager.show('Trabajando en modo offline por ahora', 'warning', 'Conexión limitada');
+          this.updateSyncStatus('offline', 'Modo offline');
+        }
+      }
+
+      async hashPin(pin) {
+        // Crear hash SHA-256 del PIN con salt
+        const salt = 'proforma-salt-2024';
+        const encoder = new TextEncoder();
+        const data = encoder.encode(pin + salt);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+
+      async createOrVerifyUserProfile(pin) {
+        try {
+          // Hashear el PIN localmente para seguridad
+          const hashedPin = await this.hashPin(pin);
+          
+          // Intentar crear/actualizar el perfil de usuario
+          const { error } = await supabase
+            .from('user_profiles')
+            .upsert({
+              user_id: this.currentSupabaseUser.id,
+              username: this.currentUser,
+              pin_hash: hashedPin,
+              profile_data: this.userProfiles[this.currentUser]
+            }, { 
+              ignoreDuplicates: true 
+            });
+
+          if (error) {
+            console.log('Error al crear/actualizar perfil (no crítico):', error.message);
+            // No lanzar error, continuar funcionando
+          }
+
+          console.log('Perfil de usuario verificado/creado');
+        } catch (error) {
+          console.error('Error verificando perfil:', error);
+          throw new Error('Error al verificar usuario');
         }
       }
 
       async logout() {
-        try {
-          await supabase.auth.signOut();
-          this.currentSupabaseUser = null;
-          this.isOnline = false;
-          this.updateAuthUI();
-          this.updateSyncStatus('offline', 'Desconectado');
-          ToastManager.show('Los datos se guardan localmente', 'info', 'Desconectado');
-        } catch (error) {
-          console.error('Error al desconectar:', error);
-          ToastManager.show('Error al desconectar', 'error');
+        const confirmed = await ModalManager.show(
+          'Cerrar Sesión', 
+          '¿Estás seguro de que quieres salir? Se guardará tu trabajo.', 
+          'Salir', 
+          'warning'
+        );
+        
+        if (confirmed) {
+          try {
+            // Guardar trabajo actual
+            this.saveCurrentProforma();
+            
+            // Cerrar sesión de Supabase
+            await supabase.auth.signOut();
+            
+            // Limpiar autenticación
+            this.currentSupabaseUser = null;
+            this.isOnline = false;
+            this.selectedLoginUser = null;
+            
+            // Mostrar pantalla de login
+            this.showLoginScreen();
+            
+            ToastManager.show('Sesión cerrada correctamente', 'success', 'Hasta pronto');
+          } catch (error) {
+            console.error('Error al desconectar:', error);
+            ToastManager.show('Error al cerrar sesión', 'error', 'Error');
+          }
         }
       }
 
       workOffline() {
-        document.getElementById('auth-panel').style.display = 'none';
+        // Método simplificado - panel auth eliminado
         ToastManager.show('Los datos se guardan localmente en tu navegador', 'info', 'Modo sin conexión');
       }
 
@@ -955,82 +1283,159 @@
 
       async createTablesIfNeeded() {
         try {
-          // Intentar crear las tablas si no existen
-          await supabase.rpc('create_tables_if_not_exist');
+          // Verificar si las tablas existen haciendo una consulta simple
+          await supabase.from('user_profiles').select('id').limit(1);
+          await supabase.from('proformas').select('id').limit(1);
+          console.log('Tablas verificadas correctamente');
         } catch (error) {
-          // Si la función no existe, crear las tablas directamente
-          console.log('Creando tablas automáticamente...');
-          
-          // Crear una proforma de prueba para que se cree la tabla
-          try {
-            await supabase.from('user_profiles').select('*').limit(1);
-            await supabase.from('proformas').select('*').limit(1);
-          } catch (tableError) {
-            ToastManager.show('Las tablas se crearán automáticamente cuando guardes datos', 'info', 'Base de datos');
-          }
+          console.log('Tablas no encontradas. Se crearán automáticamente al guardar datos.');
+          // Las tablas se crearán automáticamente en el primer INSERT
         }
       }
 
       async syncProfileToSupabase() {
-        if (!this.isOnline) return;
+        console.log('🔄 Iniciando sincronización de perfil...');
+        console.log('Online:', this.isOnline);
+        console.log('Usuario Supabase:', this.currentSupabaseUser?.id);
+        console.log('Perfil a sincronizar:', this.userProfiles[this.currentUser]);
+        
+        if (!this.isOnline || !this.currentSupabaseUser) {
+          console.log('❌ No se puede sincronizar - sin conexión o usuario');
+          return;
+        }
 
         try {
-          const { error } = await supabase
-            .from('user_profiles')
-            .upsert({
-              user_id: this.currentSupabaseUser.id,
-              email: this.currentSupabaseUser.email,
-              username: this.currentUser,
-              profile_data: this.userProfiles[this.currentUser]
-            });
+          await NetworkManager.retryOperation(async () => {
+            // Primero intentar actualizar
+            const { error: updateError } = await supabase
+              .from('user_profiles')
+              .update({
+                profile_data: this.userProfiles[this.currentUser],
+                updated_at: new Date().toISOString()
+              })
+              .eq('user_id', this.currentSupabaseUser.id);
 
-          if (error) throw error;
+            if (updateError) {
+              // Si falla update, intentar insertar (puede no existir el perfil)
+              const { error: insertError } = await supabase
+                .from('user_profiles')
+                .insert({
+                  user_id: this.currentSupabaseUser.id,
+                  username: this.currentUser,
+                  pin_hash: 'updated_via_ui', // Placeholder, el PIN real ya está hasheado
+                  profile_data: this.userProfiles[this.currentUser]
+                });
+
+              if (insertError && !insertError.message.includes('duplicate')) {
+                throw new Error(`Error al sincronizar perfil: ${insertError.message}`);
+              }
+            }
+          });
+          
+          console.log('✅ Perfil sincronizado exitosamente con Supabase');
+          console.log('Datos enviados:', this.userProfiles[this.currentUser]);
+          this.updateSyncStatus('online', 'Sincronizado', 'Perfil actualizado en la nube');
         } catch (error) {
-          console.error('Error sincronizando perfil:', error);
+          console.error('Error sincronizando perfil después de reintentos:', error);
+          this.updateSyncStatus('error', 'Error de sincronización', 'Perfil no sincronizado');
         }
       }
 
       async syncProfileFromSupabase() {
-        if (!this.isOnline) return;
+        if (!this.isOnline || !this.currentSupabaseUser) return;
 
         try {
           const { data, error } = await supabase
             .from('user_profiles')
             .select('*')
             .eq('user_id', this.currentSupabaseUser.id)
-            .single();
+            .maybeSingle();
 
-          if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows
+          if (error) {
+            console.log('No se pudo acceder al perfil en la nube:', error.message);
+            return;
+          }
+
+          if (!data) {
+            console.log('Perfil no encontrado en la nube, se creará al guardar');
+            return;
+          }
           
           if (data && data.profile_data) {
-            this.userProfiles[data.username] = data.profile_data;
+            // Merge con datos locales, preservando PINs locales
+            const cloudProfile = data.profile_data;
+            const localProfile = this.userProfiles[data.username];
+            
+            if (localProfile) {
+              cloudProfile.pin = localProfile.pin; // Preservar PIN local
+            }
+            
+            this.userProfiles[data.username] = cloudProfile;
             this.saveUserProfiles();
+            console.log('Perfil sincronizado desde la nube');
           }
         } catch (error) {
           console.error('Error cargando perfil:', error);
+          // No mostrar error al usuario, trabajar con datos locales
         }
       }
 
       async syncProformasFromSupabase() {
-        if (!this.isOnline) return;
+        if (!this.isOnline || !this.currentSupabaseUser) return;
 
         try {
           const { data, error } = await supabase
             .from('proformas')
-            .select('*')
+            .select('proforma_number, proforma_data, created_at')
             .eq('user_id', this.currentSupabaseUser.id)
-            .eq('username', this.currentUser);
+            .eq('username', this.currentUser)
+            .order('created_at', { ascending: false });
 
-          if (error) throw error;
+          if (error) {
+            console.log('Proformas no encontradas en la nube, se crearán al guardar');
+            return;
+          }
 
           if (data && data.length > 0) {
             const supabaseProformas = data.map(item => item.proforma_data);
-            localStorage.setItem(this.getStorageKey(), JSON.stringify(supabaseProformas));
+            
+            // Merge con datos locales (mantener lo más reciente)
+            const localProformas = this.getSavedProformas();
+            const mergedProformas = this.mergeProformas(localProformas, supabaseProformas);
+            
+            localStorage.setItem(this.getStorageKey(), JSON.stringify(mergedProformas));
             this.loadSavedProformas();
+            console.log(`${data.length} proformas sincronizadas desde la nube`);
+          } else {
+            console.log('No hay proformas en la nube para este usuario');
           }
         } catch (error) {
           console.error('Error cargando proformas:', error);
+          // No mostrar error al usuario, trabajar con datos locales
         }
+      }
+
+      mergeProformas(local, cloud) {
+        const merged = [...local];
+        
+        cloud.forEach(cloudProforma => {
+          const existingIndex = merged.findIndex(p => p.number === cloudProforma.number);
+          
+          if (existingIndex >= 0) {
+            // Si existe, usar la más reciente basada en timestamp
+            const localTimestamp = new Date(merged[existingIndex].timestamp);
+            const cloudTimestamp = new Date(cloudProforma.timestamp);
+            
+            if (cloudTimestamp > localTimestamp) {
+              merged[existingIndex] = cloudProforma;
+            }
+          } else {
+            // Si no existe, agregar
+            merged.push(cloudProforma);
+          }
+        });
+        
+        return merged;
       }
 
       generateProformaNumber() {
@@ -1090,12 +1495,13 @@
           timestamp: new Date().toISOString()
         };
 
-        // Recoger opciones de la tabla
-        const rows = document.querySelectorAll('tbody tr');
+        // Recoger opciones de la tabla (ahora dinámicas)
+        const rows = document.querySelectorAll('#options-tbody tr');
         rows.forEach(row => {
           const cells = row.querySelectorAll('td[contenteditable]');
           if (cells.length >= 3) {
             data.options.push({
+              id: row.getAttribute('data-option-id'),
               name: cells[0].textContent,
               description: cells[1].innerHTML,
               price: cells[2].textContent
@@ -1114,17 +1520,20 @@
         editables[1].textContent = data.client.contact;
         editables[2].textContent = data.client.ruc;
 
-        // Llenar opciones
-        const rows = document.querySelectorAll('tbody tr');
+        // Limpiar tabla de opciones y recrear dinámicamente
+        const tbody = document.getElementById('options-tbody');
+        tbody.innerHTML = '';
+        
         data.options.forEach((option, index) => {
-          if (rows[index]) {
-            const cells = rows[index].querySelectorAll('td[contenteditable]');
-            if (cells.length >= 3) {
-              cells[0].textContent = option.name;
-              cells[1].innerHTML = option.description;
-              cells[2].textContent = option.price;
-            }
-          }
+          const newRow = document.createElement('tr');
+          newRow.setAttribute('data-option-id', option.id || Date.now() + index);
+          newRow.innerHTML = `
+            <td contenteditable="true">${option.name}</td>
+            <td class="incl" contenteditable="true">${option.description}</td>
+            <td class="price" contenteditable="true">${option.price}</td>
+            <td><button class="btn-small" onclick="manager.removeOption(${option.id || Date.now() + index})" style="background: #ef4444; color: white; border: none;">×</button></td>
+          `;
+          tbody.appendChild(newRow);
         });
 
         // Llenar otros campos
@@ -1151,8 +1560,8 @@
           ToastManager.show(`Nueva proforma creada y guardada`, 'success', `Proforma ${data.number}`);
         }
         
-        // Guardar localmente
-        localStorage.setItem(this.getStorageKey(), JSON.stringify(saved));
+        // Guardar localmente con validación
+        this.saveProformas(saved);
         
         // Sincronizar con Supabase si está conectado
         if (this.isOnline) {
@@ -1168,28 +1577,44 @@
       }
 
       async syncProformaToSupabase(proformaData) {
-        if (!this.isOnline) return;
+        if (!this.isOnline || !this.currentSupabaseUser) {
+          // Agregar a cola de sincronización si no hay conexión real
+          this.pendingSync.push({ type: 'proforma', data: proformaData });
+          localStorage.setItem('pending-sync', JSON.stringify(this.pendingSync));
+          return;
+        }
 
         try {
-          const { error } = await supabase
-            .from('proformas')
-            .upsert({
-              user_id: this.currentSupabaseUser.id,
-              username: this.currentUser,
-              proforma_number: proformaData.number,
-              proforma_data: proformaData
-            });
+          await NetworkManager.retryOperation(async () => {
+            const { error } = await supabase
+              .from('proformas')
+              .upsert({
+                user_id: this.currentSupabaseUser.id,
+                username: this.currentUser,
+                proforma_number: proformaData.number,
+                proforma_data: proformaData
+              });
 
-          if (error) throw error;
+            if (error) {
+              throw new Error(`Error Supabase: ${error.message}`);
+            }
+          });
+          
           console.log('Proforma sincronizada con Supabase');
         } catch (error) {
-          console.error('Error sincronizando proforma:', error);
-          this.updateSyncStatus('error', 'Error de sincronización');
+          console.error('Error sincronizando proforma después de reintentos:', error);
+          // Agregar a cola de sincronización en caso de error
+          this.pendingSync.push({ type: 'proforma', data: proformaData });
+          localStorage.setItem('pending-sync', JSON.stringify(this.pendingSync));
+          
+          if (NetworkManager.isNetworkError(error)) {
+            ToastManager.show('Se sincronizará cuando mejore la conexión', 'warning', 'Conexión inestable');
+          }
         }
       }
 
-      newProforma(showConfirm = true) {
-        if (!showConfirm || this.confirmAction('¿Crear nueva proforma?', 'Los cambios no guardados se perderán')) {
+      async newProforma(showConfirm = true) {
+        if (!showConfirm || await this.confirmAction('¿Crear nueva proforma?', 'Los cambios no guardados se perderán')) {
           // Limpiar todos los campos editables
           document.querySelectorAll('[contenteditable]').forEach(el => {
             if (el.innerHTML.includes('[')) return; // Mantener placeholders
@@ -1202,27 +1627,34 @@
           this.setCurrentDate();
           
           // Resetear opciones a valores por defecto
-          const rows = document.querySelectorAll('tbody tr');
+          const tbody = document.getElementById('options-tbody');
+          tbody.innerHTML = '';
+          
           const defaultOptions = [
             {
+              id: 1,
               name: 'Opción 1 — WordPress',
               description: '• Diseño personalizado y responsive.<br>• Integración de <strong>formulario de recepción</strong> vinculado a cuestionario de Facebook.<br>• <strong>Call to Action a WhatsApp</strong>.<br>• Capacitación básica.',
               price: '2,000.00'
             },
             {
+              id: 2,
               name: 'Opción 2 — Next.js',
               description: '• Arquitectura moderna con alto rendimiento y SEO técnico.<br>• Integración de <strong>formulario de recepción</strong> vinculada a cuestionario de Facebook.<br>• <strong>Call to Action a WhatsApp</strong>.<br>• Diseño moderno y escalable.',
               price: '3,000.00'
             }
           ];
           
-          rows.forEach((row, index) => {
-            if (defaultOptions[index]) {
-              const cells = row.querySelectorAll('td[contenteditable]');
-              cells[0].textContent = defaultOptions[index].name;
-              cells[1].innerHTML = defaultOptions[index].description;
-              cells[2].textContent = defaultOptions[index].price;
-            }
+          defaultOptions.forEach(option => {
+            const newRow = document.createElement('tr');
+            newRow.setAttribute('data-option-id', option.id);
+            newRow.innerHTML = `
+              <td contenteditable="true">${option.name}</td>
+              <td class="incl" contenteditable="true">${option.description}</td>
+              <td class="price" contenteditable="true">${option.price}</td>
+              <td><button class="btn-small" onclick="manager.removeOption(${option.id})" style="background: #ef4444; color: white; border: none;">×</button></td>
+            `;
+            tbody.appendChild(newRow);
           });
           
           this.updatePriceSummary();
@@ -1231,8 +1663,45 @@
       }
 
       getSavedProformas() {
-        const saved = localStorage.getItem(this.getStorageKey());
-        return saved ? JSON.parse(saved) : [];
+        try {
+          const saved = localStorage.getItem(this.getStorageKey());
+          if (!saved) return [];
+          
+          const decoded = CryptoManager.decode(saved);
+          const proformas = typeof decoded === 'string' ? JSON.parse(decoded) : decoded;
+          
+          // Validar estructura de datos
+          if (this.validateProformas(proformas)) {
+            return proformas;
+          } else {
+            console.warn('Proformas corruptas, intentando recuperar backup');
+            return this.recoverFromBackup('proformas') || [];
+          }
+        } catch (error) {
+          console.error('Error cargando proformas:', error);
+          return this.recoverFromBackup('proformas') || [];
+        }
+      }
+
+      saveProformas(proformas) {
+        try {
+          const encoded = CryptoManager.encode(proformas);
+          localStorage.setItem(this.getStorageKey(), encoded);
+          
+          // Crear backup automático
+          this.createBackup('proformas', proformas);
+        } catch (error) {
+          console.error('Error guardando proformas:', error);
+          ToastManager.show('Error al guardar proformas', 'error', 'Error de almacenamiento');
+        }
+      }
+
+      validateProformas(proformas) {
+        if (!Array.isArray(proformas)) return false;
+        
+        return proformas.every(p => {
+          return p.number && p.client && p.options && p.timestamp;
+        });
       }
 
       loadSavedProformas() {
@@ -1284,11 +1753,11 @@
         }
       }
 
-      deleteProforma(number) {
-        if (this.confirmAction(`¿Eliminar la proforma ${number}?`, 'Esta acción no se puede deshacer')) {
+      async deleteProforma(number) {
+        if (await this.confirmAction(`¿Eliminar la proforma ${number}?`, 'Esta acción no se puede deshacer')) {
           const saved = this.getSavedProformas();
           const filtered = saved.filter(p => p.number !== number);
-          localStorage.setItem(this.getStorageKey(), JSON.stringify(filtered));
+          this.saveProformas(filtered);
           this.loadSavedProformas();
           ToastManager.show('Proforma eliminada del historial', 'success', `${number} eliminada`);
         }
@@ -1360,9 +1829,449 @@
         }, 30000);
       }
 
-      confirmAction(title, message) {
-        // Por ahora usar confirm nativo, pero podrías crear un modal elegante
-        return confirm(`${title}\n\n${message}`);
+      async resetProfiles() {
+        if (await ModalManager.show('¿Resetear todos los perfiles?', 'Esto restablecerá los PINs originales y no se puede deshacer.', 'Resetear', 'danger')) {
+          localStorage.removeItem('user-profiles');
+          this.userProfiles = this.getDefaultProfiles();
+          this.saveUserProfiles();
+          this.updateUserInterface();
+          ToastManager.show('Perfiles restablecidos a valores por defecto', 'success', 'Perfiles reseteados');
+          console.log('Perfiles después del reset:', this.userProfiles);
+        }
+      }
+
+      createBackup(type, data) {
+        try {
+          const timestamp = new Date().toISOString();
+          const backupKey = `backup-${type}-${this.currentUser}`;
+          const backupData = {
+            data: data,
+            timestamp: timestamp,
+            version: '1.0'
+          };
+          
+          localStorage.setItem(backupKey, JSON.stringify(backupData));
+          
+          // Mantener solo los últimos 3 backups
+          this.cleanOldBackups(type);
+        } catch (error) {
+          console.error('Error creando backup:', error);
+        }
+      }
+
+      recoverFromBackup(type) {
+        try {
+          const backupKey = `backup-${type}-${this.currentUser}`;
+          const backup = localStorage.getItem(backupKey);
+          
+          if (backup) {
+            const backupData = JSON.parse(backup);
+            console.log(`Recuperando ${type} desde backup del ${backupData.timestamp}`);
+            return backupData.data;
+          }
+        } catch (error) {
+          console.error('Error recuperando backup:', error);
+        }
+        return null;
+      }
+
+      cleanOldBackups(type) {
+        try {
+          const keys = Object.keys(localStorage);
+          const backupKeys = keys.filter(key => key.startsWith(`backup-${type}-${this.currentUser}`));
+          
+          if (backupKeys.length > 3) {
+            backupKeys.sort().slice(0, -3).forEach(key => {
+              localStorage.removeItem(key);
+            });
+          }
+        } catch (error) {
+          console.error('Error limpiando backups:', error);
+        }
+      }
+
+      addNewOption() {
+        const tbody = document.getElementById('options-tbody');
+        const currentOptions = tbody.querySelectorAll('tr').length;
+        const newOptionId = Date.now(); // ID único basado en timestamp
+        
+        const newRow = document.createElement('tr');
+        newRow.setAttribute('data-option-id', newOptionId);
+        newRow.innerHTML = `
+          <td contenteditable="true">Opción ${currentOptions + 1} — Nueva Opción</td>
+          <td class="incl" contenteditable="true">• Describe aquí las características de esta opción.<br>• Añade todos los detalles necesarios.<br>• Personaliza según tus necesidades.</td>
+          <td class="price" contenteditable="true">0.00</td>
+          <td><button class="btn-small" onclick="manager.removeOption(${newOptionId})" style="background: #ef4444; color: white; border: none;">×</button></td>
+        `;
+        
+        tbody.appendChild(newRow);
+        this.updatePriceSummary();
+        ToastManager.show('Nueva opción añadida', 'success', 'Opción agregada');
+        
+        // Focus en el primer campo para editar
+        const firstCell = newRow.querySelector('td[contenteditable]');
+        if (firstCell) {
+          firstCell.focus();
+        }
+      }
+
+      removeOption(optionId) {
+        const row = document.querySelector(`tr[data-option-id="${optionId}"]`);
+        if (row) {
+          const tbody = document.getElementById('options-tbody');
+          const totalRows = tbody.querySelectorAll('tr').length;
+          
+          if (totalRows <= 1) {
+            ToastManager.show('Debe haber al menos una opción', 'warning', 'Opción requerida');
+            return;
+          }
+          
+          row.remove();
+          this.updatePriceSummary();
+          this.renumberOptions();
+          ToastManager.show('Opción eliminada', 'success', 'Opción removida');
+        }
+      }
+
+      renumberOptions() {
+        const rows = document.querySelectorAll('#options-tbody tr');
+        rows.forEach((row, index) => {
+          const firstCell = row.querySelector('td[contenteditable]');
+          if (firstCell) {
+            const currentText = firstCell.textContent;
+            // Solo renumerar si sigue el patrón "Opción X —"
+            if (currentText.match(/^Opción \d+ —/)) {
+              firstCell.textContent = currentText.replace(/^Opción \d+ —/, `Opción ${index + 1} —`);
+            }
+          }
+        });
+      }
+
+      showUserSwitcher() {
+        const panel = document.getElementById('user-switch-panel');
+        panel.classList.add('active');
+        
+        // Marcar usuario activo
+        document.querySelectorAll('.user-card').forEach(card => {
+          card.classList.remove('active');
+          if (card.dataset.user === this.currentUser) {
+            card.classList.add('active');
+          }
+        });
+      }
+
+      hideUserSwitcher() {
+        document.getElementById('user-switch-panel').classList.remove('active');
+      }
+
+      updatePreview() {
+        const name = document.getElementById('profile-name').value || 'Nombre de la Empresa';
+        const tagline = document.getElementById('profile-tagline').value || 'Tu tagline aparecerá aquí';
+        const email = document.getElementById('profile-email').value || 'email@ejemplo.com';
+        const phone = document.getElementById('profile-phone').value || '+51 999 999 999';
+        const logoUrl = document.getElementById('profile-logo').value;
+
+        // Actualizar vista previa
+        document.getElementById('preview-name').textContent = name;
+        document.getElementById('preview-tagline').textContent = tagline;
+        document.getElementById('preview-email').textContent = `📧 ${email}`;
+        document.getElementById('preview-phone').textContent = `📱 ${phone}`;
+
+        // Mostrar logo si hay URL válida
+        const logoImg = document.getElementById('preview-logo-img');
+        const logoAvatar = document.getElementById('preview-avatar');
+        
+        if (logoUrl && this.isValidImageUrl(logoUrl)) {
+          logoImg.src = logoUrl;
+          logoImg.style.display = 'block';
+          logoAvatar.style.display = 'none';
+        } else {
+          logoImg.style.display = 'none';
+          logoAvatar.style.display = 'flex';
+          logoAvatar.textContent = name.charAt(0).toUpperCase() || 'T';
+        }
+
+        // Validar campos en tiempo real
+        this.validateField('profile-name', name);
+        this.validateField('profile-email', document.getElementById('profile-email').value);
+        this.validateField('profile-phone', document.getElementById('profile-phone').value);
+        this.validateField('profile-logo', logoUrl);
+      }
+
+      validateField(fieldId, value) {
+        const input = document.getElementById(fieldId);
+        const feedback = document.getElementById(fieldId.replace('profile-', '') + '-feedback');
+        
+        input.classList.remove('error', 'success');
+        feedback.classList.remove('error', 'success');
+        feedback.textContent = '';
+
+        if (!value) return;
+
+        switch(fieldId) {
+          case 'profile-name':
+            if (value.length < 2) {
+              this.showFieldError(input, feedback, 'El nombre debe tener al menos 2 caracteres');
+            } else {
+              this.showFieldSuccess(input, feedback, '✓ Nombre válido');
+            }
+            break;
+          
+          case 'profile-email':
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(value)) {
+              this.showFieldError(input, feedback, 'Ingresa un email válido');
+            } else {
+              this.showFieldSuccess(input, feedback, '✓ Email válido');
+            }
+            break;
+          
+          case 'profile-phone':
+            const phoneRegex = /^[\+]?[\d\s\-\(\)]{9,}$/;
+            if (!phoneRegex.test(value)) {
+              this.showFieldError(input, feedback, 'Ingresa un teléfono válido');
+            } else {
+              this.showFieldSuccess(input, feedback, '✓ Teléfono válido');
+            }
+            break;
+          
+          case 'profile-logo':
+            if (value && !this.isValidImageUrl(value)) {
+              this.showFieldError(input, feedback, 'URL de imagen no válida');
+            } else if (value) {
+              this.showFieldSuccess(input, feedback, '✓ URL válida');
+            }
+            break;
+        }
+      }
+
+      showFieldError(input, feedback, message) {
+        input.classList.add('error');
+        feedback.classList.add('error');
+        feedback.textContent = message;
+      }
+
+      showFieldSuccess(input, feedback, message) {
+        input.classList.add('success');
+        feedback.classList.add('success');
+        feedback.textContent = message;
+      }
+
+      isValidImageUrl(url) {
+        try {
+          new URL(url);
+          return /\.(jpg|jpeg|png|gif|svg|webp)$/i.test(url) || url.includes('cloudinary.com') || url.includes('imgur.com');
+        } catch {
+          return false;
+        }
+      }
+
+      testLogoUrl() {
+        const url = document.getElementById('profile-logo').value;
+        const feedback = document.getElementById('logo-feedback');
+        
+        if (!url) {
+          ToastManager.show('Ingresa una URL de logo primero', 'warning', 'URL requerida');
+          return;
+        }
+
+        // Crear imagen temporal para probar
+        const img = new Image();
+        img.onload = () => {
+          this.showFieldSuccess(document.getElementById('profile-logo'), feedback, '✓ Logo cargado correctamente');
+          this.updatePreview();
+          ToastManager.show('Logo válido y cargado', 'success', 'Prueba exitosa');
+        };
+        img.onerror = () => {
+          this.showFieldError(document.getElementById('profile-logo'), feedback, '✗ No se pudo cargar la imagen');
+          ToastManager.show('Error al cargar el logo', 'error', 'URL inválida');
+        };
+        img.src = url;
+      }
+
+      updateUserInterface() {
+        console.log('🔄 Actualizando interfaz para usuario:', this.currentUser);
+        // Actualizar el header con información del usuario actual
+        const profile = this.userProfiles[this.currentUser];
+        console.log('📝 Perfil a aplicar:', profile);
+        
+        // Actualizar logo
+        const logo = document.getElementById('logo');
+        const logoSource = document.querySelector('.logo source');
+        if (logo && profile.logo) {
+          logo.src = profile.logo;
+          if (logoSource) logoSource.srcset = profile.logo;
+          console.log('🖼️ Logo actualizado:', profile.logo);
+        }
+
+        // Actualizar nombre en el brand (puede ser h1 o texto directo)
+        const brandNameElement = document.querySelector('.brand h1') || document.querySelector('.brand div');
+        if (brandNameElement) {
+          if (brandNameElement.tagName === 'H1') {
+            brandNameElement.textContent = profile.name;
+          } else {
+            // Si no hay h1, buscar o crear la estructura
+            brandNameElement.innerHTML = `<h1>${profile.name}</h1><small>${profile.tagline}</small>`;
+          }
+          console.log('🏷️ Nombre actualizado:', profile.name);
+        }
+
+        // Actualizar tagline
+        const brandDiv = document.querySelector('.brand div small') || document.querySelector('.brand small');
+        if (brandDiv) {
+          brandDiv.textContent = profile.tagline;
+          console.log('📄 Tagline actualizado:', profile.tagline);
+        }
+
+        // Actualizar footer
+        const footerElements = document.querySelectorAll('footer span');
+        if (footerElements.length >= 2) {
+          footerElements[0].textContent = profile.email;
+          footerElements[1].textContent = profile.phone;
+          console.log('📞 Footer actualizado:', profile.email, profile.phone);
+        }
+
+        // Actualizar enlace de WhatsApp
+        this.updateWhatsAppLink();
+        
+        // Actualizar panel moderno
+        this.updateModernUserPanel();
+        
+        console.log('✅ Interfaz actualizada completamente');
+      }
+
+      updateModernUserPanel() {
+        const profile = this.userProfiles[this.currentUser];
+        
+        // Actualizar panel de usuario
+        document.getElementById('current-user-avatar').textContent = profile.name.charAt(0).toUpperCase();
+        document.getElementById('current-user-name').textContent = profile.name;
+        document.getElementById('current-user-role').textContent = profile.tagline;
+        
+        // Actualizar estadísticas
+        const proformas = this.getSavedProformas();
+        document.getElementById('user-proformas-count').textContent = proformas.length;
+        document.getElementById('user-last-activity').textContent = 'Hoy';
+      }
+
+      updateWhatsAppLink() {
+        const profile = this.userProfiles[this.currentUser];
+        const whatsappElement = document.getElementById('cta-wsp');
+        
+        if (whatsappElement && profile.phone) {
+          // Limpiar el número de teléfono (remover espacios, guiones, etc.)
+          const cleanPhone = profile.phone.replace(/[^\d+]/g, '');
+          
+          // Crear mensaje personalizado
+          const mensaje = `Hola ${profile.name}, me interesa cotizar un proyecto web.`;
+          const encodedMessage = encodeURIComponent(mensaje);
+          
+          // Actualizar el enlace de WhatsApp
+          whatsappElement.href = `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
+          
+          console.log('🔗 Enlace de WhatsApp actualizado:', whatsappElement.href);
+          console.log('📱 Teléfono usado:', cleanPhone);
+          console.log('👤 Usuario actual:', profile.name);
+        }
+      }
+
+      toggleProfilePanel() {
+        console.log('🔧 Abriendo/cerrando panel de configuración...');
+        const panel = document.getElementById('profile-panel');
+        const isActive = panel.classList.contains('active');
+        
+        console.log('Panel encontrado:', !!panel);
+        console.log('Panel activo antes:', isActive);
+        
+        if (isActive) {
+          panel.classList.remove('active');
+          console.log('❌ Panel cerrado');
+        } else {
+          panel.classList.add('active');
+          this.loadProfileData();
+          this.updatePreview();
+          console.log('✅ Panel abierto - datos cargados');
+        }
+      }
+
+      loadProfileData() {
+        const profile = this.userProfiles[this.currentUser];
+        document.getElementById('profile-name').value = profile.name;
+        document.getElementById('profile-tagline').value = profile.tagline;
+        document.getElementById('profile-email').value = profile.email;
+        document.getElementById('profile-phone').value = profile.phone;
+        document.getElementById('profile-logo').value = profile.logo;
+        document.getElementById('profile-pin').value = profile.pin || '';
+        document.getElementById('profile-pin-confirm').value = profile.pin || '';
+      }
+
+      resetCurrentProfile() {
+        const defaults = this.getDefaultProfiles()[this.currentUser];
+        document.getElementById('profile-name').value = defaults.name;
+        document.getElementById('profile-tagline').value = defaults.tagline;
+        document.getElementById('profile-email').value = defaults.email;
+        document.getElementById('profile-phone').value = defaults.phone;
+        document.getElementById('profile-logo').value = defaults.logo;
+        document.getElementById('profile-pin').value = defaults.pin;
+        document.getElementById('profile-pin-confirm').value = defaults.pin;
+        this.updatePreview();
+        ToastManager.show('Perfil restablecido a valores por defecto', 'info', 'Perfil restablecido');
+      }
+
+      async confirmAction(title, message) {
+        return await ModalManager.show(title, message, 'Confirmar', 'danger');
+      }
+
+      // Método para limpiar interfaz antes de imprimir
+      cleanForPrint() {
+        // Ocultar todos los toasts
+        const toasts = document.querySelectorAll('.toast');
+        toasts.forEach(toast => toast.remove());
+        
+        // Ocultar panel de usuario (se restaurará automáticamente después)
+        const userPanel = document.querySelector('.modern-user-panel');
+        if (userPanel) userPanel.style.display = 'none';
+        
+        // Ocultar cualquier modal o overlay
+        const modals = document.querySelectorAll('.modal-overlay, .user-switch-panel, .profile-panel');
+        modals.forEach(modal => modal.style.display = 'none');
+      }
+
+      // Método para restaurar interfaz después de imprimir
+      restoreAfterPrint() {
+        // Restaurar panel de usuario
+        const userPanel = document.querySelector('.modern-user-panel');
+        if (userPanel) userPanel.style.display = 'block';
+        
+        // Cerrar cualquier panel que pudiera estar abierto
+        const switchPanel = document.querySelector('.user-switch-panel');
+        if (switchPanel) switchPanel.classList.remove('active');
+        
+        const profilePanel = document.querySelector('.modern-profile-panel');
+        if (profilePanel) profilePanel.classList.remove('active');
+        
+        // Mostrar notificación que la interfaz fue restaurada
+        ToastManager.show('Panel de usuario restaurado. Puedes cambiar de cuenta si necesitas.', 'info', 'Interfaz restaurada');
+        
+        console.log('Interfaz restaurada después de imprimir');
+      }
+
+      // Método de acceso rápido para cambiar usuario (atajo de teclado)
+      setupKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+          // Ctrl + U = Cambiar Usuario
+          if (e.ctrlKey && e.key === 'u') {
+            e.preventDefault();
+            this.showUserSwitcher();
+            ToastManager.show('Panel de cambio de usuario abierto', 'info', 'Atajo de teclado');
+          }
+          
+          // Ctrl + Shift + L = Cerrar Sesión
+          if (e.ctrlKey && e.shiftKey && e.key === 'L') {
+            e.preventDefault();
+            this.logout();
+          }
+        });
       }
     }
 
@@ -1371,6 +2280,19 @@
     
     // Hacer disponible globalmente para los botones inline
     window.manager = manager;
+    
+    // Limpiar interfaz antes de imprimir
+    window.addEventListener('beforeprint', () => {
+      manager.cleanForPrint();
+    });
+    
+    // Restaurar interfaz después de imprimir
+    window.addEventListener('afterprint', () => {
+      manager.restoreAfterPrint();
+    });
+    
+    // Inicializar cuando se carga la página
+    manager.init();
   </script>
 </body>
 </html>
