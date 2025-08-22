@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Proforma — Tato</title>
+  <style>
+    :root {
+      --primary: #0f172a;        /* azul petróleo oscuro */
+      --accent: #c6a769;         /* dorado sobrio */
+      --muted: #64748b;          /* gris azulado */
+      --border: #e5e7eb;         /* gris claro */
+      --bg: #ffffff;             /* fondo */
+      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    @page {
+      size: A4;
+      margin: 20mm;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      color: var(--primary);
+      background: var(--bg);
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 24px auto;
+      padding: 28px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: grid; place-items: center;
+      background: linear-gradient(145deg, var(--primary), #1e293b);
+      color: white; font-weight: 700; font-size: 22px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+    }
+
+    .brand h1 {
+      font-size: 22px; line-height: 1.2; margin: 0;
+      letter-spacing: 0.4px;
+    }
+
+    .brand small { color: var(--muted); display: block; margin-top: 2px; }
+
+    .titlebox {
+      text-align: right;
+    }
+
+    .titlebox h2 {
+      margin: 0; font-size: 24px;
+      letter-spacing: 1.2px; text-transform: uppercase;
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px; letter-spacing: .5px;
+      margin-top: 6px;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      background: linear-gradient(#fff, #fff);
+    }
+
+    .panel h3 {
+      margin: 0 0 8px; font-size: 14px; text-transform: uppercase; letter-spacing: .8px; color: var(--muted);
+    }
+
+    .kv { display: grid; grid-template-columns: 140px 1fr; row-gap: 6px; column-gap: 8px; font-size: 14px; }
+    .kv strong { color: var(--primary); }
+    .kv span { color: var(--muted); }
+
+    .section-title {
+      margin: 18px 2px 10px; font-size: 16px; text-transform: uppercase; letter-spacing: .8px; color: var(--muted);
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { font-size: 12px; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); }
+    td { font-size: 14px; }
+
+    .price { text-align: right; font-weight: 700; }
+    .pkg {
+      font-weight: 700; color: var(--primary);
+    }
+
+    .incl { color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 8px; }
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 14px; padding: 14px 16px; background: #fff;
+    }
+    .card h4 { margin: 0 0 6px; font-size: 15px; }
+    .chip { display: inline-block; border: 1px solid var(--border); padding: 4px 8px; border-radius: 999px; font-size: 12px; color: var(--muted); margin-right: 6px; }
+
+    .totals { display: grid; grid-template-columns: 2fr 1fr; margin-top: 8px; align-items: end; }
+    .note { color: var(--muted); font-size: 12.5px; line-height: 1.6; }
+
+    .cta {
+      margin-top: 14px; display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap;
+      border: 1px dashed var(--border); border-radius: 12px; padding: 12px 14px;
+      background: linear-gradient(180deg, #ffffff, #fafafa);
+    }
+    .cta a {
+      text-decoration: none; font-weight: 700; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--primary);
+      color: #fff; background: var(--primary);
+    }
+    .cta small { color: var(--muted); }
+
+    footer {
+      border-top: 2px solid var(--border);
+      margin-top: 18px; padding-top: 10px; display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 12px;
+    }
+
+    .actions { display: flex; gap: 8px; margin: 12px 0 0; }
+    .btn {
+      appearance: none; border: 1px solid var(--border); background: #fff; color: var(--primary);
+      padding: 10px 14px; border-radius: 10px; cursor: pointer; box-shadow: var(--shadow);
+    }
+    .btn--primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* Print styles */
+    @media print {
+      .page { box-shadow: none; border: none; margin: 0; padding: 0; }
+      header { margin-bottom: 8px; padding-bottom: 8px; }
+      .actions, .btn, .cta a { display: none !important; }
+      .cta { border: none; background: none; padding: 0; }
+      footer { border-top: 1px solid var(--border); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page" id="doc">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">T</div>
+        <div>
+          <h1>Tato</h1>
+          <small>Soluciones Web Profesionales</small>
+        </div>
+      </div>
+      <div class="titlebox">
+        <h2>Proforma</h2>
+        <span class="badge">Documento no fiscal</span>
+      </div>
+    </header>
+
+    <section class="grid-2" aria-label="encabezado de proforma">
+      <div class="panel">
+        <h3>Datos de la Proforma</h3>
+        <div class="kv">
+          <strong>Nº Proforma</strong><span id="pf-number">PRO-2025-001</span>
+          <strong>Fecha</strong><span id="pf-date">—</span>
+          <strong>Validez</strong><span>15 días calendario</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Datos del Cliente</h3>
+        <div class="kv">
+          <strong>Cliente</strong><span contenteditable="true">[Nombre / Empresa]</span>
+          <strong>Contacto</strong><span contenteditable="true">[Correo] · [Tel/WhatsApp]</span>
+          <strong>RUC / ID</strong><span contenteditable="true">[Opcional]</span>
+        </div>
+      </div>
+    </section>
+
+    <h3 class="section-title">Opciones de desarrollo web</h3>
+    <table role="table" aria-label="tabla de opciones">
+      <thead>
+        <tr>
+          <th style="width: 28%">Opción</th>
+          <th>Descripción</th>
+          <th style="width: 18%" class="price">Precio (S/)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="pkg">Opción 1 — WordPress</td>
+          <td>
+            <div class="incl">
+              • Diseño personalizado y responsive.<br>
+              • Integración de <strong>formulario de recepción</strong> vinculado a cuestionario de Facebook.<br>
+              • <strong>Call to Action a WhatsApp</strong> para contacto directo.<br>
+              • Capacitación básica para gestión de contenidos.
+            </div>
+          </td>
+          <td class="price">2,000.00</td>
+        </tr>
+        <tr>
+          <td class="pkg">Opción 2 — Next.js</td>
+          <td>
+            <div class="incl">
+              • Arquitectura moderna con alto rendimiento y SEO técnico.<br>
+              • Integración de <strong>formulario de recepción</strong> vinculado a cuestionario de Facebook.<br>
+              • <strong>Call to Action a WhatsApp</strong> para contacto directo.<br>
+              • Diseño moderno y escalable (mejor base para crecer).
+            </div>
+          </td>
+          <td class="price">3,000.00</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="cards" aria-label="detalles adicionales">
+      <div class="card">
+        <h4>Incluye</h4>
+        <span class="chip">Puesta en producción</span>
+        <span class="chip">Optimizado móviles</span>
+        <span class="chip">Capacitación básica</span>
+      </div>
+      <div class="card">
+        <h4>No incluye</h4>
+        <div class="incl">Hosting y dominio (se cotizan por separado si se requiere).</div>
+      </div>
+    </div>
+
+    <div class="totals">
+      <div class="note">
+        <p><strong>Plazo estimado:</strong> 2–4 semanas según opción elegida y complejidad del contenido.</p>
+        <p>Los precios incluyen desarrollo, configuración e implementación. Esta proforma no constituye comprobante de pago.</p>
+      </div>
+      <table>
+        <tr><td style="border-bottom:none; text-align:right; padding-right:0;">Opciones</td><td style="border-bottom:none; text-align:right; font-weight:700;">S/ 2,000.00 · S/ 3,000.00</td></tr>
+      </table>
+    </div>
+
+    <div class="cta" aria-label="contacto">
+      <div>
+        <strong>¿Listo para empezar?</strong><br>
+        <small>Elige una opción y coordinemos el inicio del proyecto.</small>
+      </div>
+      <a id="cta-wsp" href="https://wa.me/" target="_blank" rel="noopener">Escríbenos por WhatsApp</a>
+    </div>
+
+    <div class="actions" aria-hidden="true">
+      <button class="btn" onclick="window.print()">Imprimir / Guardar como PDF</button>
+      <button class="btn btn--primary" id="fill-demo">Rellenar demo</button>
+    </div>
+
+    <footer>
+      <div>
+        © <span id="year"></span> Tato · contacto@tato.studio · +51 999 999 999
+      </div>
+      <div>
+        Gracias por considerar a Tato
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Fecha automática en formato local (España/Perú)
+    (() => {
+      const d = new Date();
+      const opts = { year: 'numeric', month: 'long', day: '2-digit' };
+      document.getElementById('pf-date').textContent = d.toLocaleDateString('es-PE', opts);
+      document.getElementById('year').textContent = d.getFullYear();
+    })();
+
+    // Botón de demo para completar datos de ejemplo
+    document.getElementById('fill-demo').addEventListener('click', () => {
+      document.querySelector('[contenteditable]')?.focus();
+      document.querySelectorAll('[contenteditable]')[0].textContent = 'Comercial Andina SAC';
+      document.querySelectorAll('[contenteditable]')[1].textContent = 'compras@comercialandina.pe · +51 987 654 321';
+      document.querySelectorAll('[contenteditable]')[2].textContent = '2060xxxxxxx';
+      document.getElementById('pf-number').textContent = 'PRO-2025-017';
+
+      // Preconfigurar WhatsApp con mensaje
+      const msg = encodeURIComponent('Hola Tato, estoy interesado en la Proforma PRO-2025-017. Quiero avanzar con mi sitio web.');
+      const phone = '51999999999'; // Cambiar por tu número en formato internacional
+      document.getElementById('cta-wsp').href = `https://wa.me/${phone}?text=${msg}`;
+    });
+  </script>
+</body>
+</html>
